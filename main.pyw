@@ -2,6 +2,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
 import sys
+import time
 
 from SQLConnection import *
 
@@ -359,11 +360,21 @@ program """
 
         QMessageBox.about(self, "About", aboutText)
 
+def showSplash():
+    
+    splash_pix = QPixmap('splash.png')
+    splash = QSplashScreen(splash_pix, Qt.WindowStaysOnTopHint)
+    splash.setMask(splash_pix.mask())
+    splash.show()
+    app.processEvents()
+    time.sleep(2)
+    splash.finish(splash)
     
 
 if __name__ == "__main__":
 
     app = QApplication(sys.argv)
+    showSplash()
     window = MainWindow()
     window.show()
     window.raise_()
