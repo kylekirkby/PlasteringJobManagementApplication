@@ -11,6 +11,7 @@ from ClientsMenu import *
 from PlasterersMenu import *
 from JobsMenu import *
 from AddClient import *
+from AddPlasterer import *
 
 
 class MainWindow(QMainWindow):
@@ -54,6 +55,7 @@ program """
         self.clientsLayout()
         self.plasterersLayout()
         self.addClientLayout()
+        self.addPlastererLayout()
 
         #Disable database related actions
         self.dbNotOpen()
@@ -200,15 +202,21 @@ program """
         self.openDbPushButton.clicked.connect(self.openDatabaseConn)
 
         self.addClient.triggered.connect(self.switchToAddClient)
+        self.addPlasterer.triggered.connect(self.switchToAddPlasterer)
 
         self.clientsPushButton.clicked.connect(self.switchToClientsMenu)
         self.plasterersPushButton.clicked.connect(self.switchToPlasterersMenu)
 
 
         self.clientsLayoutWidget.backButton.clicked.connect(self.switchToMainMenu)
-        self.plasterersLayoutWidget.backButton.clicked.connect(self.switchToMainMenu)
         self.clientsLayoutWidget.addClientPushButton.clicked.connect(self.switchToAddClient)
+        
+        self.plasterersLayoutWidget.addPlastererPushButton.clicked.connect(self.switchToAddPlasterer)
+        self.plasterersLayoutWidget.backButton.clicked.connect(self.switchToMainMenu)
+
         self.addClientL.cancelFormButton.clicked.connect(self.switchToClientsMenu)
+        self.addPlastererL.cancelFormButton.clicked.connect(self.switchToPlasterersMenu)
+
 
     def createNewDatabase(self):
 
@@ -306,9 +314,12 @@ program """
                            height:100px;
                            border-radius:5px;}""")
 
+
+
         self.newDbPushButton = QPushButton("New Database")
         self.newDbPushButton.setProperty("buttonClass","home")
         self.newDbPushButton.setCursor(QCursor(Qt.PointingHandCursor))
+        
         self.openDbPushButton = QPushButton("Open Database")
         self.openDbPushButton.setProperty("buttonClass","home")
         self.openDbPushButton.setCursor(QCursor(Qt.PointingHandCursor))
@@ -340,6 +351,9 @@ program """
 
     def switchToAddClient(self):
         self.stackedLayout.setCurrentIndex(4)
+
+    def switchToAddPlasterer(self):
+        self.stackedLayout.setCurrentIndex(5)
     
     def clientsLayout(self):
         self.clientsLayoutWidget = ClientsMenuWidget()
@@ -353,6 +367,9 @@ program """
         self.addClientL = AddClientWidget()
         self.stackedLayout.addWidget(self.addClientL)
 
+    def addPlastererLayout(self):
+        self.addPlastererL = AddPlastererWidget()
+        self.stackedLayout.addWidget(self.addPlastererL)
         
     def showAboutMessageBox(self):
 

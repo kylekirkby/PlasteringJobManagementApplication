@@ -27,8 +27,10 @@ class AddClientWidget(QWidget):
 
         if length > 2:
             self.clientFirstName.setStyleSheet("background-color:#c4df9b;")
+            return True
         else:
             self.clientFirstName.setStyleSheet("background-color:#f6989d;")
+            return False
 
     def validateSurname(self):
 
@@ -37,8 +39,10 @@ class AddClientWidget(QWidget):
 
         if length > 2:
             self.clientSurname.setStyleSheet("background-color:#c4df9b;")
+            return True
         else:
             self.clientSurname.setStyleSheet("background-color:#f6989d;")
+            return False
 
     def validateStreet(self):
 
@@ -47,8 +51,10 @@ class AddClientWidget(QWidget):
 
         if length > 5:
             self.clientStreet.setStyleSheet("background-color:#c4df9b;")
+            return True
         else:
             self.clientStreet.setStyleSheet("background-color:#f6989d;")
+            return False
 
 
     def validateTown(self):
@@ -79,6 +85,75 @@ class AddClientWidget(QWidget):
             self.clientPostCode.setStyleSheet("background-color:#f6989d;")
             return False
 
+
+    def validatePhoneNumber(self):
+        text = self.clientPhoneNumber.text()
+        length = len(text)
+
+        if length >= 11:
+            self.clientPhoneNumber.setStyleSheet("background-color:#c4df9b;")
+            return True
+        else:
+            self.clientPhoneNumber.setStyleSheet("background-color:#f6989d;")
+            return False
+
+    def validateEmail(self):
+        text = self.clientEmail.text()
+
+        emailRegEx = re.compile("^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$")
+
+        match = emailRegEx.match(text)
+
+        if match:
+            self.clientEmail.setStyleSheet("background-color:#c4df9b;")
+            return True
+        else:
+            self.clientEmail.setStyleSheet("background-color:#f6989d;")
+            return False
+
+
+    def validateAddClientForm(self):
+
+        self.checkFirstName = self.validateFirstName()
+        self.checkSurname = self.validateSurname()
+        self.checkStreet = self.validateStreet()
+        self.checkTown = self.validateTown()
+        self.checkPostCode = self.validatePostCode()
+        self.checkPhoneNumber = self.validatePhoneNumber()
+        self.checkEmail = self.validateEmail()
+
+        self.errorMsg = ""
+        
+        if self.checkFirstName == True:
+            if self.checkSurname == True:
+                if self.checkStreet == True:
+                    if self.checkTown == True:
+                        if self.checkPostCode == True:
+                            if self.checkPhoneNumber == True:
+                                if self.checkEmail == True:
+                                    self.errorTextContentLabel.setText("No Errors Found")
+                                else:
+                                    #email failed
+                                    self.errorTextContentLabel.setText("Email is not valid")
+                            else:
+                                #phone number failed
+                                self.errorTextContentLabel.setText("Phone Number is not valid")
+                        else:
+                            #post code failed
+                            self.errorTextContentLabel.setText("Post Code is not valid")
+                    else:
+                        #town failed
+                        self.errorTextContentLabel.setText("Town is not valid")
+                else:
+                    #street failed
+                    self.errorTextContentLabel.setText("Street is not valid")
+            else:
+                #surname failed
+                self.errorTextContentLabel.setText("Surname is not valid")
+        else:
+            #first name failed
+            self.errorTextContentLabel.setText("First Name is not valid")
+        
 
 
     
@@ -124,11 +199,23 @@ class AddClientWidget(QWidget):
 
         self.cancelFormButton = QPushButton("Cancel")
         self.addClientFormButton = QPushButton("Add Client")
-        
+
+        self.errorTextLabel = QLabel("Errors:")
+        self.errorTextContentLabel = QLabel("None")
+
+        self.addClientTitleText = QLabel("Add a Client")
+        self.shadow = QGraphicsDropShadowEffect()
+        self.shadow.setBlurRadius(5)
+        self.addClientTitleText.setGraphicsEffect(self.shadow)
+        self.addClientTitleText.setStyleSheet("font-size:20px;")
+
 
 
         grid = QGridLayout()
         grid.setSpacing(10)
+        
+        grid.addWidget(self.errorTextLabel,0,0)
+        grid.addWidget(self.errorTextContentLabel,0,1)
         
         grid.addWidget(self.clientTitleLabel, 1, 0)
         grid.addWidget(self.clientTitle, 1, 1)
@@ -161,6 +248,7 @@ class AddClientWidget(QWidget):
         self.gridWidget.setLayout(grid)
 
         self.verticalLayout = QVBoxLayout()
+        self.verticalLayout.addWidget(self.addClientTitleText)
         self.verticalLayout.addStretch(1)
         self.verticalLayout.addWidget(self.gridWidget)
 
@@ -179,6 +267,9 @@ class AddClientWidget(QWidget):
         self.clientStreet.textChanged.connect(self.validateStreet)
         self.clientTown.textChanged.connect(self.validateTown)
         self.clientPostCode.textChanged.connect(self.validatePostCode)
+        self.clientEmail.textChanged.connect(self.validateEmail)
+        self.clientPhoneNumber.textChanged.connect(self.validatePhoneNumber)
+        self.addClientFormButton.clicked.connect(self.validateAddClientForm)
 
 
 
