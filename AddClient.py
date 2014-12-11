@@ -8,17 +8,27 @@ class AddClientWidget(QWidget):
 
     """ This is the add client widget """
 
-    def __init__(self):
+    def __init__(self, parent):
 
         super().__init__()
         
         self.setProperty("addClientClass","True")
+
+        self.connection = None
+
+        self.parent = parent
         
         self.mainLayout = self.layout()
         
         self.setLayout(self.mainLayout)
 
         self.setStyleSheet("QWidget[addClientClass=True]{padding:100px;}")
+
+    def addConnection(self, connection):
+        
+        self.connection = connection
+
+        return True
 
     def validateFirstName(self):
 
@@ -111,7 +121,60 @@ class AddClientWidget(QWidget):
             self.clientEmail.setStyleSheet("background-color:#f6989d;")
             return False
 
+    def clearForm(self):
+        
+        self.clientTitle.setCurrentIndex(0)
+        self.clientFirstName.clear()
+        self.clientSurname.clear()
+        self.clientStreet.clear()
+        self.clientTown.clear()
+        self.clientCounty.setCurrentIndex(0)
+        self.clientPostCode.clear()
+        self.clientPhoneNumber.clear()
+        self.clientEmail.clear()
 
+        self.clientFirstName.setStyleSheet("background-color:#FFF;")
+        self.clientSurname.setStyleSheet("background-color:#FFF;")
+        self.clientStreet.setStyleSheet("background-color:#FFF;")
+        self.clientTown.setStyleSheet("background-color:#FFF;")
+        self.clientPostCode.setStyleSheet("background-color:#FFF;")
+        self.clientPhoneNumber.setStyleSheet("background-color:#FFF;")
+        self.clientEmail.setStyleSheet("background-color:#FFF;")
+
+        self.errorTextContentLabel.setText("None")
+        
+
+    def addClientToDatabase(self):
+
+        county = str(self.clientCounty.currentText())
+        title = str(self.clientTitle.currentText())
+
+        values = { "Title": title,
+                   "FirstName": self.clientFirstName.text(),
+                  "Surname": self.clientSurname.text(),
+                  "Street": self.clientStreet.text(),
+                  "Town": self.clientTown.text(),
+                  "County": county,
+                  "PostCode": self.clientPostCode.text(),
+                  "Email": self.clientEmail.text(),
+                   "PhoneNumber": self.clientPhoneNumber.text()}
+
+        clientAdded = self.connection.addClient(values)
+
+        if clientAdded:
+
+            self.clearForm()
+            self.parent.switchToClientsMenu()
+            
+            infoText = """ The New client has been added to the database!"""
+            QMessageBox.information(self, "Client Added", infoText)
+            
+        else:
+            infoText = """ The New client was not added to the database successfully! """
+
+            QMessageBox.critical(self, "Client Not Added", infoText)
+            
+    
     def validateAddClientForm(self):
 
         self.checkFirstName = self.validateFirstName()
@@ -123,39 +186,31 @@ class AddClientWidget(QWidget):
         self.checkEmail = self.validateEmail()
 
         self.errorMsg = ""
+
+        if self.checkFirstName == False:
+            self.errorMsg += "Invalid First Name, "
+        if self.checkSurname == False:
+            self.errorMsg += "Invalid Surname, "
+        if self.checkStreet == False:
+            self.errorMsg += "Invalid Street, "
+        if self.checkTown == False:
+            self.errorMsg += "Invalid Town, "
+        if self.checkPostCode == False:
+            self.errorMsg += "Invalid Post Code Format, "
+        if self.checkPhoneNumber == False:
+            self.errorMsg += "Invalid Phone Number Format, "
+        if self.checkEmail == False:
+            self.errorMsg += "Invalid Email Format, "
         
-        if self.checkFirstName == True:
-            if self.checkSurname == True:
-                if self.checkStreet == True:
-                    if self.checkTown == True:
-                        if self.checkPostCode == True:
-                            if self.checkPhoneNumber == True:
-                                if self.checkEmail == True:
-                                    self.errorTextContentLabel.setText("No Errors Found")
-                                else:
-                                    #email failed
-                                    self.errorTextContentLabel.setText("Email is not valid")
-                            else:
-                                #phone number failed
-                                self.errorTextContentLabel.setText("Phone Number is not valid")
-                        else:
-                            #post code failed
-                            self.errorTextContentLabel.setText("Post Code is not valid")
-                    else:
-                        #town failed
-                        self.errorTextContentLabel.setText("Town is not valid")
-                else:
-                    #street failed
-                    self.errorTextContentLabel.setText("Street is not valid")
-            else:
-                #surname failed
-                self.errorTextContentLabel.setText("Surname is not valid")
+
+        self.errorTextContentLabel.setText(self.errorMsg)
+        
+
+        if self.errorMsg == "":
+            self.addClientToDatabase()
+            return True
         else:
-            #first name failed
-            self.errorTextContentLabel.setText("First Name is not valid")
-        
-
-
+            return False
     
 
     def layout(self):
@@ -202,6 +257,8 @@ class AddClientWidget(QWidget):
 
         self.errorTextLabel = QLabel("Errors:")
         self.errorTextContentLabel = QLabel("None")
+        self.errorTextContentLabel.setStyleSheet("color: red;")
+
 
         self.addClientTitleText = QLabel("Add a Client")
         self.shadow = QGraphicsDropShadowEffect()

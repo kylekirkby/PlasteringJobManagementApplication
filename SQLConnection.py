@@ -73,8 +73,38 @@ class SQLConnection:
         else:
             return False
             
+    def addClient(self, values):
 
-                
+        query = QSqlQuery(self.db)
+        
+        query.prepare(""" INSERT INTO Client(ClientTitle,ClientFirstName,ClientSurname,ClientAddrLine1,
+ClientAddrLine2,ClientAddrLine3,ClientAddrLine4,ClientEmail,ClientPhoneNumber) VALUES(:clientTitle,
+:clientFirstName,:clientSurname,:clientStreet,:clientTown,:clientCounty,:clientPostCode,:clientEmail,
+:clientPhoneNumber)""")
+
+        query.bindValue(":clientTitle",values["Title"])
+        query.bindValue(":clientFirstName",values["FirstName"])
+        query.bindValue(":clientSurname",values["Surname"])
+        query.bindValue(":clientStreet",values["Street"])
+        query.bindValue(":clientTown",values["Town"])
+        query.bindValue(":clientCounty",values["County"])
+        query.bindValue(":clientPostCode",values["PostCode"])
+        query.bindValue(":clientEmail",values["Email"])
+        query.bindValue(":clientPhoneNumber",values["PhoneNumber"])
+
+        success = query.exec_()
+
+        if success:
+            return True
+        else:
+            return False
+        
+##            print("Failure!")
+##            error = query.lastError()
+##        
+##            print(error.text())
+
+    
     def numberOfProxies(self):
         
         query = QSqlQuery()

@@ -64,8 +64,15 @@ program """
         self.connections()
 
 
-##
-##        
+    def addDbConnectionsToWidgets(self):
+
+        self.addClientL.addConnection(self.connection)
+        self.addPlastererL.addConnection(self.connection)
+        
+
+
+
+        
     def dbNotOpen(self):
         
         self.addClient.setEnabled(False)
@@ -85,7 +92,7 @@ program """
 
 
         self.stackedLayout.setCurrentIndex(0)
-
+    
         
     def dbOpen(self):
         
@@ -105,6 +112,8 @@ program """
         self.closeDatabase.setEnabled(True)
 
         self.stackedLayout.setCurrentIndex(1)
+
+        self.addDbConnectionsToWidgets()
 
 
         
@@ -364,7 +373,7 @@ program """
         self.stackedLayout.addWidget(self.plasterersLayoutWidget)
 
     def addClientLayout(self):
-        self.addClientL = AddClientWidget()
+        self.addClientL = AddClientWidget(self)
         self.stackedLayout.addWidget(self.addClientL)
 
     def addPlastererLayout(self):
