@@ -8,13 +8,15 @@ class AddPlastererWidget(QWidget):
 
     """ This is the add plasterer widget """
 
-    def __init__(self):
+    def __init__(self, parent):
 
         super().__init__()
         
         self.setProperty("addPlastererClass","True")
         
         self.connection = None
+
+        self.parent = parent
         
         self.mainLayout = self.layout()
         
@@ -121,20 +123,69 @@ class AddPlastererWidget(QWidget):
         
         text = self.plastererDailyRate.text()
 
-        match = postCodeRegEx.match(text.upper())
+        dailyRateRegEx = re.compile("[0-9]+\.[0-9]+")
+
+        match = dailyRateRegEx.match(text.upper())
 
         if match:
-            self.plastererPostCode.setStyleSheet("background-color:#c4df9b;")
+            self.plastererDailyRate.setStyleSheet("background-color:#c4df9b;")
             return True
         else:
-            self.plastererPostCode.setStyleSheet("background-color:#f6989d;")
-            return Falses
+            self.plastererDailyRate.setStyleSheet("background-color:#f6989d;")
+            return False
 
+    def clearForm(self):
+        
+        self.plastererTitle.setCurrentIndex(0)
+        self.plastererFirstName.clear()
+        self.plastererSurname.clear()
+        self.plastererStreet.clear()
+        self.plastererTown.clear()
+        self.plastererCounty.setCurrentIndex(0)
+        self.plastererPostCode.clear()
+        self.plastererPhoneNumber.clear()
+        self.plastererEmail.clear()
+        self.plastererDailyRate.clear()
+
+        self.plastererFirstName.setStyleSheet("background-color:#FFF;")
+        self.plastererSurname.setStyleSheet("background-color:#FFF;")
+        self.plastererStreet.setStyleSheet("background-color:#FFF;")
+        self.plastererTown.setStyleSheet("background-color:#FFF;")
+        self.plastererPostCode.setStyleSheet("background-color:#FFF;")
+        self.plastererPhoneNumber.setStyleSheet("background-color:#FFF;")
+        self.plastererEmail.setStyleSheet("background-color:#FFF;")
+        self.plastererDailyRate.setStyleSheet("background-color:#FFF;")
+
+        self.errorTextContentLabel.setText("None")
 
     def addPlastererToDatabase(self):
+        
+        county = str(self.plastererCounty.currentText())
+        title = str(self.plastererTitle.currentText())
+        
+        values = { "Title": title,
+                   "FirstName": self.plastererFirstName.text(),
+                  "Surname": self.plastererSurname.text(),
+                  "Street": self.plastererStreet.text(),
+                  "Town": self.plastererTown.text(),
+                  "County": county,
+                  "PostCode": self.plastererPostCode.text(),
+                  "Email": self.plastererEmail.text(),
+                   "PhoneNumber": self.plastererPhoneNumber.text(),
+                   "DailyRate": self.plastererDailyRate.text()}
 
-        pass
+        plastererAdded = self.connection.addPlasterer(values)
+
+        if plastererAdded:
+            self.clearForm()
+            self.parent.switchToPlasterersMenu()
+            infoText = """ The New Plasterer has been added to the database!"""
+            QMessageBox.information(self, "Plasterer Added", infoText)
             
+        else:
+            infoText = """ The New Plasterer was not added successfully! """
+            QMessageBox.critical(self, "Plasterer Not Added", infoText)  
+
 
     def validateAddPlastererForm(self):
 
@@ -145,6 +196,7 @@ class AddPlastererWidget(QWidget):
         self.checkPostCode = self.validatePostCode()
         self.checkPhoneNumber = self.validatePhoneNumber()
         self.checkEmail = self.validateEmail()
+        self.checkDailyRate = self.validateDailyRate()
 
         self.errorMsg = ""
 
@@ -162,6 +214,8 @@ class AddPlastererWidget(QWidget):
             self.errorMsg += "Invalid Phone Number Format, "
         if self.checkEmail == False:
             self.errorMsg += "Invalid Email Format, "
+        if self.checkDailyRate == False:
+            self.errorMsg += "Invalid Daily Rate, "
         
 
         self.errorTextContentLabel.setText(self.errorMsg)
@@ -292,6 +346,7 @@ class AddPlastererWidget(QWidget):
         self.plastererPostCode.textChanged.connect(self.validatePostCode)
         self.plastererEmail.textChanged.connect(self.validateEmail)
         self.plastererPhoneNumber.textChanged.connect(self.validatePhoneNumber)
+        self.plastererDailyRate.textChanged.connect(self.validateDailyRate)
         self.addPlastererFormButton.clicked.connect(self.validateAddPlastererForm)
 
 

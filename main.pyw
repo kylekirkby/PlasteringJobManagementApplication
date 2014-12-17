@@ -12,6 +12,7 @@ from PlasterersMenu import *
 from JobsMenu import *
 from AddClient import *
 from AddPlasterer import *
+from ManageClients import *
 
 
 class MainWindow(QMainWindow):
@@ -22,8 +23,7 @@ program """
         super().__init__()
 
         self.setWindowTitle("Plastering Job Management Application")
-        self.resize(800,560)
-        self.setFixedSize(800,560)
+        self.resize(900,800)
         self.icon = QIcon(QPixmap("./icon.png"))
         self.setWindowIcon(self.icon)
 
@@ -56,6 +56,8 @@ program """
         self.plasterersLayout()
         self.addClientLayout()
         self.addPlastererLayout()
+        self.jobsLayout()
+        self.manageClientsLayout()
 
         #Disable database related actions
         self.dbNotOpen()
@@ -68,11 +70,9 @@ program """
 
         self.addClientL.addConnection(self.connection)
         self.addPlastererL.addConnection(self.connection)
-        
+        self.manageClientsL.addConnection(self.connection)
 
-
-
-        
+       
     def dbNotOpen(self):
         
         self.addClient.setEnabled(False)
@@ -198,8 +198,6 @@ program """
         self.statusBar = QStatusBar()
 
         self.setStatusBar(self.statusBar)
-
-
         
     def connections(self):
     
@@ -210,6 +208,7 @@ program """
         self.newDbPushButton.clicked.connect(self.createNewDatabase)
         self.openDbPushButton.clicked.connect(self.openDatabaseConn)
 
+
         self.addClient.triggered.connect(self.switchToAddClient)
         self.addPlasterer.triggered.connect(self.switchToAddPlasterer)
 
@@ -219,25 +218,36 @@ program """
 
         self.clientsLayoutWidget.backButton.clicked.connect(self.switchToMainMenu)
         self.clientsLayoutWidget.addClientPushButton.clicked.connect(self.switchToAddClient)
+        self.clientsLayoutWidget.manageClientsPushButton.clicked.connect(self.switchToManageClients)
         
         self.plasterersLayoutWidget.addPlastererPushButton.clicked.connect(self.switchToAddPlasterer)
         self.plasterersLayoutWidget.backButton.clicked.connect(self.switchToMainMenu)
 
+        self.jobsPushButton.clicked.connect(self.switchToJobsMenu)
+
+        self.jobsLayoutWidget.backButton.clicked.connect(self.switchToMainMenu)
+        
         self.addClientL.cancelFormButton.clicked.connect(self.switchToClientsMenu)
         self.addPlastererL.cancelFormButton.clicked.connect(self.switchToPlasterersMenu)
 
 
+        self.manageClientsL.cancelPushButton.clicked.connect(self.switchToClientsMenu)
+
+
+        
     def createNewDatabase(self):
 
         path = QFileDialog.getSaveFileName()
 
         if self.connection:
             self.close_connection()
-        
-        self.connection  = SQLConnection(path)
-        self.connection.create_database()
-        self.statusBar.showMessage("A new Database has been created!")
-        self.dbOpen()
+
+        print(path)
+        if path != "":
+            self.connection  = SQLConnection(path)
+            self.connection.create_database()
+            self.statusBar.showMessage("A new Database has been created!")
+            self.dbOpen()
 
     def closeDatabaseConn(self):
         
@@ -253,12 +263,15 @@ program """
             self.close_connection()
 
         path = QFileDialog.getOpenFileName()
-        self.connection = SQLConnection(path)        
-        opened = self.connection.open_database()
 
-        if opened:
-            self.dbOpen()
-            self.statusBar.showMessage("Database has been opened.")
+        if path != "":
+
+            self.connection = SQLConnection(path)        
+            opened = self.connection.open_database()
+
+            if opened:
+                self.dbOpen()
+                self.statusBar.showMessage("Database has been opened.")
   
         
 
@@ -361,8 +374,18 @@ program """
     def switchToAddClient(self):
         self.stackedLayout.setCurrentIndex(4)
 
+
     def switchToAddPlasterer(self):
         self.stackedLayout.setCurrentIndex(5)
+
+    def switchToJobsMenu(self):
+        self.stackedLayout.setCurrentIndex(6)
+
+    def switchToManageClients(self):
+        self.stackedLayout.setCurrentIndex(7)
+        query = self.connection.initialTable()
+        
+        self.manageClientsL.showResults(query)
     
     def clientsLayout(self):
         self.clientsLayoutWidget = ClientsMenuWidget()
@@ -372,12 +395,26 @@ program """
         self.plasterersLayoutWidget = PlasterersMenuWidget()
         self.stackedLayout.addWidget(self.plasterersLayoutWidget)
 
+    def jobsLayout(self):
+        self.jobsLayoutWidget = JobsMenuWidget()
+        self.stackedLayout.addWidget(self.jobsLayoutWidget)
+
+
+    def manageClientsLayout(self):
+        self.manageClientsL = ManageClientsWidget(self)
+        self.stackedLayout.addWidget(self.manageClientsL)
+        
+
+
+
+        
+
     def addClientLayout(self):
         self.addClientL = AddClientWidget(self)
         self.stackedLayout.addWidget(self.addClientL)
 
     def addPlastererLayout(self):
-        self.addPlastererL = AddPlastererWidget()
+        self.addPlastererL = AddPlastererWidget(self)
         self.stackedLayout.addWidget(self.addPlastererL)
         
     def showAboutMessageBox(self):

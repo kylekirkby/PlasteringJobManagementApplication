@@ -104,78 +104,112 @@ ClientAddrLine2,ClientAddrLine3,ClientAddrLine4,ClientEmail,ClientPhoneNumber) V
 ##        
 ##            print(error.text())
 
+
+    def addPlasterer(self, values):
+
+        query = QSqlQuery(self.db)
+        
+        query.prepare(""" INSERT INTO Plasterer(PlastererTitle,PlastererFirstName,PlastererSurname,PlastererAddrLine1,
+PlastererAddrLine2,PlastererAddrLine3,PlastererAddrLine4,PlastererEmail,PlastererPhoneNumber,PlastererDailyRate) VALUES(:plastererTitle,
+:plastererFirstName,:plastererSurname,:plastererStreet,:plastererTown,:plastererCounty,:plastererPostCode,:plastererEmail,
+:plastererPhoneNumber,:plastererDailyRate)""")
+
+        query.bindValue(":plastererTitle",values["Title"])
+        query.bindValue(":plastererFirstName",values["FirstName"])
+        query.bindValue(":plastererSurname",values["Surname"])
+        query.bindValue(":plastererStreet",values["Street"])
+        query.bindValue(":plastererTown",values["Town"])
+        query.bindValue(":plastererCounty",values["County"])
+        query.bindValue(":plastererPostCode",values["PostCode"])
+        query.bindValue(":plastererEmail",values["Email"])
+        query.bindValue(":plastererPhoneNumber",values["PhoneNumber"])
+        query.bindValue(":plastererDailyRate",values["DailyRate"])
+
+        success = query.exec_()
+
+        if success:
+            return True
+        else:
+            return False
+
+    def getAllClients(self):
+
+        query = QSqlQuery(self.db)
+
+        query.prepare("SELECT * FROM Client")
+
+        query.exec_()
+
+        return query
+    def initialTable(self):
+
+        query = QSqlQuery(self.db)
+        query.prepare("SELECT * FROM Client WHERE 1=0")
+        query.exec_()
+
+        return query
     
-    def numberOfProxies(self):
-        
-        query = QSqlQuery()
-        query.prepare(""" SELECT * FROM Proxies """)
-        query.exec_()
+    def getClientData(self, clientID):
+##
+##        query = QSqlQuery(self.db)
+##        query.prepare("SELECT * FROM Client WHERE ClientID = :clientId")
+##        query.bindValue(":clientId", clientID)
+##        query.exec_()
 
-        return query.size()
+        with sqlite3.connect(self.path) as db:
 
-    def getAllProxies(self):
+            cursor = db.cursor()
+            sql = "SELECT * FROM Client WHERE ClientID = ?"
+            values = (clientID,)
+            cursor.execute(sql, values)
+            data = cursor.fetchone()
+            db.commit()
 
-        query = QSqlQuery()
-        query.prepare("SELECT * FROM Proxies")
-        query.exec_()
-
-        
-        results = []
-
-        header = self.selected_columns
-         
-        query.first()
-         
-        while query.isValid():
-            record = [query.value(index).toString() for index in range(len(header))]
-            results.append(record)
-            query.next()
-
-        print(results)
-        
+            return data
             
-    def addProxy(self, proxy):
-        
-        query = QSqlQuery()
-        
-        query.prepare("""INSERT INTO Proxies(ProxyIP,ProxyPort,ProxyConnectionType,
-ProxySpeed,ProxyType,ProxyCountry,ProxyCity) VALUES(:ip,:port,:connType,
-:speed,:type,:country,:city)""")
 
-        proxyAddr = proxy[0]
-        proxyAddrSplit = proxyAddr.split(":")
-        proxyIP = proxyAddrSplit[0]
-        proxyPort = proxyAddrSplit[1]
-        proxyConnection = proxy[1]
-        proxySpeed = proxy[2]
-        proxyType = proxy[3]
-        proxyCountry = proxy[4]
-        proxyCity = proxy[5]
         
-        query.bindValue(":ip",proxyIP)
-        query.bindValue(":port",proxyPort)
-        query.bindValue(":connType",proxyConnection)
-        query.bindValue(":speed",proxySpeed)
-        query.bindValue(":type",proxyType)
-        query.bindValue(":country",proxyCountry)
-        query.bindValue(":city",proxyCity)
+        
+    
 
-        query.exec_()
+    def getSearchQuery(self, queryText):
+
+        searchText = queryText
+
+        if searchText == "":
+            query = self.initialTable()
+
+            return query
+        else:
+
+            query = QSqlQuery(self.db)
+
+            query.prepare("""SELECT * FROM Client WHERE
+        ClientFirstName LIKE '%'||:searchString||'%' OR
+        ClientSurname LIKE '%'||:searchString||'%' OR
+        ClientAddrLine1 LIKE '%'||:searchString||'%' OR
+        ClientAddrLine2 LIKE '%'||:searchString||'%' OR
+        ClientAddrLine3 LIKE '%'||:searchString||'%' OR
+        ClientAddrLine4 LIKE '%'||:searchString||'%' OR
+        ClientPhoneNumber LIKE '%'||:searchString||'%' OR
+        ClientEmail LIKE '%'||:searchString||'%'
+        """)
+        
+
+            query.bindValue(":searchString", searchText)
+
+            success = query.exec_()
+
+            if success:
+                return query
+            else:
+                
+                error =  query.lastError()
+                print(error.text())
+
+                return query
+
                 
     def closeEvent(self,event):
         
         self.close_database()
-
-    def show_all_products(self):
-        query = QSqlQuery()
-        query.prepare(""" SELECT * FROM Product""")
-        query.exec_()
-        return query
-
-    def find_products_by_number(self,values):
-        
-        query = QSqlQuery()
-        query.prepare(""" SELECT * FROM Product WHERE ProductID =? """)
-        query.addBindValue(values[0])
-        query.exec_()
-        return query
