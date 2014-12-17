@@ -76,12 +76,10 @@ program """
     def dbNotOpen(self):
         
         self.addClient.setEnabled(False)
-        self.editClients.setEnabled(False)
-        self.searchClients.setEnabled(False)
+        self.manageClients.setEnabled(False)
 
         self.addPlasterer.setEnabled(False)
-        self.editPlasterers.setEnabled(False)
-        self.viewPlasterers.setEnabled(False)
+        self.managePlasterers.setEnabled(False)
 
         self.addJob.setEnabled(False)
         self.viewJobs.setEnabled(False)
@@ -97,12 +95,11 @@ program """
     def dbOpen(self):
         
         self.addClient.setEnabled(True)
-        self.editClients.setEnabled(True)
-        self.searchClients.setEnabled(True)
+        self.manageClients.setEnabled(True)
+
         
         self.addPlasterer.setEnabled(True)
-        self.editPlasterers.setEnabled(True)
-        self.viewPlasterers.setEnabled(True)
+        self.managePlasterers.setEnabled(True)
 
         self.addJob.setEnabled(True)
         self.viewJobs.setEnabled(True)
@@ -121,12 +118,10 @@ program """
         
         #actions
         self.addClient = QAction("Add Client",self)
-        self.editClients = QAction("Edit Clients", self)
-        self.searchClients = QAction("Search Clients", self)
+        self.manageClients = QAction("Manage Clients",self)
 
         self.addPlasterer = QAction("Add Plasterer", self)
-        self.editPlasterers = QAction("Edit Plasterers", self)
-        self.viewPlasterers = QAction("View Plasterers", self)
+        self.managePlasterers = QAction("Manage Plasterers",self)
 
         self.addJob = QAction("New Job",self)
         self.viewJobs = QAction("Manage Jobs", self)
@@ -150,8 +145,7 @@ program """
         #Clients Menu
         self.clientsMenu = self.menu.addMenu("Clients")
         self.clientsMenu.addAction(self.addClient)
-        self.clientsMenu.addAction(self.editClients)
-        self.clientsMenu.addAction(self.searchClients)
+        self.clientsMenu.addAction(self.manageClients)
 
         #Jobs Menu
         self.jobsMenu = self.menu.addMenu("Jobs")
@@ -162,8 +156,7 @@ program """
         #Plasterers Menu
         self.plasterersMenu = self.menu.addMenu("Plasterers")
         self.plasterersMenu.addAction(self.addPlasterer)
-        self.plasterersMenu.addAction(self.editPlasterers)
-        self.plasterersMenu.addAction(self.viewPlasterers)
+        self.plasterersMenu.addAction(self.managePlasterers)
 
         
         #Help Menu
@@ -176,13 +169,11 @@ program """
         self.toolBar.addSeparator()
 
         self.toolBar.addAction(self.addClient)
-        self.toolBar.addAction(self.editClients)
-        self.toolBar.addAction(self.searchClients)
+        self.toolBar.addAction(self.manageClients)
         self.toolBar.addSeparator()
 
         self.toolBar.addAction(self.addPlasterer)
-        self.toolBar.addAction(self.editPlasterers)
-        self.toolBar.addAction(self.viewPlasterers)
+        self.toolBar.addAction(self.managePlasterers)
         self.toolBar.addSeparator()
 
         self.toolBar.addAction(self.addJob)
@@ -210,7 +201,10 @@ program """
 
 
         self.addClient.triggered.connect(self.switchToAddClient)
+        self.manageClients.triggered.connect(self.switchToManageClients)
+        
         self.addPlasterer.triggered.connect(self.switchToAddPlasterer)
+    
 
         self.clientsPushButton.clicked.connect(self.switchToClientsMenu)
         self.plasterersPushButton.clicked.connect(self.switchToPlasterersMenu)
