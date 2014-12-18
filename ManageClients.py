@@ -65,7 +65,11 @@ class ManageClientsWidget(QWidget):
         
         self.results_table = QTableView()
 
+        header = QHeaderView(Qt.Horizontal, self.results_table)
+        header.setStretchLastSection(True)
 
+        self.results_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        
         #set selection behaviour to select entire row at a time
         self.results_table.setSelectionBehavior(QAbstractItemView.SelectRows)
         
@@ -184,6 +188,33 @@ class ManageClientsWidget(QWidget):
         
         return True
 
+    def editingClient(self):
+        
+        self.searchClientsGroup.setEnabled(False)
+        self.tableGroup.setEnabled(False)
+
+        self.editClientGroupBox.setEnabled(True)
+
+
+    def searchingClients(self):
+        #clear edit form
+        self.firstNameEdit.clear()
+        self.surnameEdit.clear()
+        self.streetEdit.clear()
+        self.townEdit.clear()
+        self.countyEdit.clear()
+        self.postCodeEdit.clear()
+        self.emailEdit.clear()
+        self.phoneNumberEdit.clear()
+
+
+        
+        self.searchClientsGroup.setEnabled(True)
+        self.tableGroup.setEnabled(True)
+        
+        self.editClientGroupBox.setEnabled(False)
+
+        
     def changeFormFields(self):
 
         selectedIndexes = self.results_table.selectionModel().selection().indexes()
@@ -205,7 +236,17 @@ class ManageClientsWidget(QWidget):
                 cliID = int(self.currentRow) + 1
                 data = self.connection.getClientData(cliID)
 
+
+                self.searchClientsGroup.setEnabled(False)
+                self.tableGroup.setEnabled(False)
+                self.editClientGroupBox.setEnabled(True)
+
                 self.editClientPopulate(data)
+
+
+    def cancelEdit(self):
+        
+        self.searchingClients()
 
                             
     def editClientPopulate(self, data):
@@ -219,8 +260,6 @@ class ManageClientsWidget(QWidget):
         postCode = data[6]
         email = data[7]
         phoneNumber = data[8]
-
-        self.editClientGroupBox.setEnabled(True)
 
         self.firstNameEdit.setText(clientFirstName)
         self.surnameEdit.setText(clientSurname)
