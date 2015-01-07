@@ -225,9 +225,6 @@ program """
         self.addPlastererL.cancelFormButton.clicked.connect(self.switchToPlasterersMenu)
 
 
-        self.manageClientsL.cancelPushButton.clicked.connect(self.switchToClientsMenu)
-
-
         
     def createNewDatabase(self):
 

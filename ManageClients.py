@@ -68,7 +68,7 @@ class ManageClientsWidget(QWidget):
         header = QHeaderView(Qt.Horizontal, self.results_table)
         header.setStretchLastSection(True)
 
-        self.results_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        #self.results_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         
         #set selection behaviour to select entire row at a time
         self.results_table.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -115,13 +115,32 @@ class ManageClientsWidget(QWidget):
         self.surnameEdit = QLineEdit()
         self.streetEdit = QLineEdit()
         self.townEdit = QLineEdit()
-        self.countyEdit = QLineEdit()
+        self.counties = ['Aberdeenshire', 'Angus', 'Argyll and Bute', 'Ayrshire', 'Ayrshire and Arran',
+                 'Banffshire', 'Bedfordshire', 'Berkshire','Berwickshire', 'Buckinghamshire',
+                 'Caithness', 'Cambridgeshire', 'Ceredigion', 'Cheshire', 'City of Bristol', 'City of Edinburgh',
+                 'City of Glasgow', 'Clwyd', 'Cornwall', 'Cumbria', 'Denbighshire', 'Derbyshire', 'Devon', 'Dorset',
+                 'Dumbartonshire', 'Dumfries','Durham', 'Dyfed', 'East Lothian', 'East Sussex', 'East Yorkshire', 'Essex',
+                 'Ettrick and Lauderdale', 'Fife', 'Gloucestershire','Greater London', 'Greater Manchester', 'Gwent', 'Gwynedd',
+                 'Hampshire', 'Herefordshire', 'Hertfordshire', 'Highlands', 'Inverness','Isle of Skye', 'Isle of Wight', 'Kent',
+                 'Lanarkshire', 'Lancashire', 'Leicestershire', 'Lincolnshire', 'Merseyside', 'Mid Glamorgan','Morayshire', 'Norfolk',
+                 'North Yorkshire', 'Northamptonshire', 'Northumberland', 'Nottinghamshire', 'Orkney', 'Oxfordshire', 'Perth and Kinross',
+                 'Powys', 'Renfrewshire', 'Roxburgh', 'Shetland', 'Shropshire', 'Somerset', 'South Glamorgan', 'South Yorkshire', 'Staffordshire',
+                 'Stirling and Falkirk', 'Suffolk', 'Surrey', 'Sutherland', 'Tweeddale', 'Tyne and Wear', 'Warwickshire', 'West Glamorgan',
+                 'West Lothian', 'West Midlands', 'West Sussex', 'West Yorkshire', 'Western Isles', 'Wiltshire', 'Worcestershire']
+
+
+
+        
+        self.countyEdit = QComboBox()
+        self.countyEdit.addItems(self.counties)
+
+        
         self.postCodeEdit = QLineEdit()
         self.emailEdit = QLineEdit()
         self.phoneNumberEdit = QLineEdit()
 
         self.savePushButton = QPushButton("Save Info")
-        self.cancelPushButton = QPushButton("Back To Menu")
+        self.cancelPushButton = QPushButton("Cancel Edit")
 
         self.grid.addWidget(self.firstNameEditLabel, 1, 0)
         self.grid.addWidget(self.firstNameEdit, 1, 1)
@@ -202,12 +221,21 @@ class ManageClientsWidget(QWidget):
         self.surnameEdit.clear()
         self.streetEdit.clear()
         self.townEdit.clear()
-        self.countyEdit.clear()
         self.postCodeEdit.clear()
         self.emailEdit.clear()
         self.phoneNumberEdit.clear()
 
+        self.firstNameEdit.setStyleSheet("")
+        self.surnameEdit.setStyleSheet("")
+        self.streetEdit.setStyleSheet("")
+        self.townEdit.setStyleSheet("")
+        self.countyEdit.setStyleSheet("")
+        self.postCodeEdit.setStyleSheet("")
+        self.emailEdit.setStyleSheet("")
+        self.phoneNumberEdit.setStyleSheet("")
 
+
+        self.results_table.selectionModel().clearSelection()
         
         self.searchClientsGroup.setEnabled(True)
         self.tableGroup.setEnabled(True)
@@ -244,28 +272,29 @@ class ManageClientsWidget(QWidget):
                 self.editClientPopulate(data)
 
 
-    def cancelEdit(self):
-        
-        self.searchingClients()
+
 
                             
     def editClientPopulate(self, data):
 
         clientId = data[0]
-        clientFirstName = data[1]
-        clientSurname = data[2]
-        street = data[3]
-        town = data[4]
-        county = data[5]
-        postCode = data[6]
-        email = data[7]
-        phoneNumber = data[8]
+        clientFirstName = data[2]
+        clientSurname = data[3]
+        street = data[4]
+        town = data[5]
+        county = data[6]
+        postCode = data[7]
+        email = data[8]
+        phoneNumber = data[9]
 
         self.firstNameEdit.setText(clientFirstName)
         self.surnameEdit.setText(clientSurname)
         self.streetEdit.setText(street)
         self.townEdit.setText(town)
-        self.countyEdit.setText(county)
+
+        self.countyIndex = self.countyEdit.findText(county)
+        self.countyEdit.setCurrentIndex(self.countyIndex)
+
         self.postCodeEdit.setText(postCode)
         self.emailEdit.setText(email)
         self.phoneNumberEdit.setText(phoneNumber)
@@ -286,6 +315,114 @@ class ManageClientsWidget(QWidget):
         self.showAllClientsPushButton.clicked.connect(self.showAllClientsInTable)
         #self.results_table.selectionModel().selectionChanged.connect(self.changeFormFields)
 
+
+        
+        self.firstNameEdit.textChanged.connect(self.validateFirstName)
+        self.surnameEdit.textChanged.connect(self.validateSurname)
+        self.streetEdit.textChanged.connect(self.validateStreet)
+        self.townEdit.textChanged.connect(self.validateTown)
+        self.postCodeEdit.textChanged.connect(self.validatePostCode)
+        self.emailEdit.textChanged.connect(self.validateEmail)
+        self.phoneNumberEdit.textChanged.connect(self.validatePhoneNumber)
+        self.savePushButton.clicked.connect(self.validateForm)
+        self.cancelPushButton.clicked.connect(self.searchingClients)
+
+
+        
+
+    def validateForm(self):
+        pass
+
+    def validateFirstName(self):
+
+        text = self.firstNameEdit.text()
+        length = len(text)
+
+        if length > 2:
+            self.firstNameEdit.setStyleSheet("background-color:#c4df9b;")
+            return True
+        else:
+            self.firstNameEdit.setStyleSheet("background-color:#f6989d;")
+            return False
+
+    def validateSurname(self):
+
+        text = self.surnameEdit.text()
+        length = len(text)
+
+        if length > 2:
+            self.surnameEdit.setStyleSheet("background-color:#c4df9b;")
+            return True
+        else:
+            self.surnameEdit.setStyleSheet("background-color:#f6989d;")
+            return False
+
+    def validateStreet(self):
+
+        text = self.streetEdit.text()
+        length = len(text)
+
+        if length > 5:
+            self.streetEdit.setStyleSheet("background-color:#c4df9b;")
+            return True
+        else:
+            self.streetEdit.setStyleSheet("background-color:#f6989d;")
+            return False
+
+
+    def validateTown(self):
+        
+        text = self.townEdit.text()
+        length = len(text)
+
+        if length > 3:
+            self.townEdit.setStyleSheet("background-color:#c4df9b;")
+            return True
+        else:
+            self.townEdit.setStyleSheet("background-color:#f6989d;")
+            return False
+
+
+    def validatePostCode(self):
+        
+        text = self.postCodeEdit.text()
+
+        postCodeRegEx = re.compile("[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}")
+
+        match = postCodeRegEx.match(text.upper())
+
+        if match:
+            self.postCodeEdit.setStyleSheet("background-color:#c4df9b;")
+            return True
+        else:
+            self.postCodeEdit.setStyleSheet("background-color:#f6989d;")
+            return False
+
+
+    def validatePhoneNumber(self):
+        text = self.phoneNumberEdit.text()
+        length = len(text)
+
+        if length == 11:
+            self.phoneNumberEdit.setStyleSheet("background-color:#c4df9b;")
+            return True
+        else:
+            self.phoneNumberEdit.setStyleSheet("background-color:#f6989d;")
+            return False
+
+    def validateEmail(self):
+        text = self.emailEdit.text()
+
+        emailRegEx = re.compile("^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$")
+
+        match = emailRegEx.match(text)
+
+        if match:
+            self.emailEdit.setStyleSheet("background-color:#c4df9b;")
+            return True
+        else:
+            self.emailEdit.setStyleSheet("background-color:#f6989d;")
+            return False
         
 
 
