@@ -33,6 +33,8 @@ class ManageClientsWidget(QWidget):
         
         self.setLayout(self.mainLayout)
 
+        self.currentMemberId = None
+
         
 
 
@@ -328,10 +330,45 @@ class ManageClientsWidget(QWidget):
         self.cancelPushButton.clicked.connect(self.searchingClients)
 
 
-        
+    def addUpdatedDataToDb(self):
+        pass
 
     def validateForm(self):
-        pass
+
+        self.checkFirstName = self.validateFirstName()
+        self.checkSurname = self.validateSurname()
+        self.checkStreet = self.validateStreet()
+        self.checkTown = self.validateTown()
+        self.checkPostCode = self.validatePostCode()
+        self.checkPhoneNumber = self.validatePhoneNumber()
+        self.checkEmail = self.validateEmail()
+
+        self.errorMsg = ""
+
+        if self.checkFirstName == False:
+            self.errorMsg += "Invalid First Name, "
+        if self.checkSurname == False:
+            self.errorMsg += "Invalid Surname, "
+        if self.checkStreet == False:
+            self.errorMsg += "Invalid Street, "
+        if self.checkTown == False:
+            self.errorMsg += "Invalid Town, "
+        if self.checkPostCode == False:
+            self.errorMsg += "Invalid Post Code Format, "
+        if self.checkPhoneNumber == False:
+            self.errorMsg += "Invalid Phone Number Format, "
+        if self.checkEmail == False:
+            self.errorMsg += "Invalid Email Format, "
+        
+
+        self.errorTextContentLabel.setText(self.errorMsg)
+        
+
+        if self.errorMsg == "":
+            self.addUpdatedDataToDb()
+            return True
+        else:
+            return False
 
     def validateFirstName(self):
 

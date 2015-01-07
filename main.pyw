@@ -396,10 +396,6 @@ program """
         self.stackedLayout.addWidget(self.manageClientsL)
         
 
-
-
-        
-
     def addClientLayout(self):
         self.addClientL = AddClientWidget(self)
         self.stackedLayout.addWidget(self.addClientL)
