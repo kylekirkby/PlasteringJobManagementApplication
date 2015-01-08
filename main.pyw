@@ -13,6 +13,7 @@ from JobsMenu import *
 from AddClient import *
 from AddPlasterer import *
 from ManageClients import *
+from ManagePlasterers import *
 
 
 class MainWindow(QMainWindow):
@@ -58,6 +59,7 @@ program """
         self.addPlastererLayout()
         self.jobsLayout()
         self.manageClientsLayout()
+        self.managePlasterersLayout()
 
         #Disable database related actions
         self.dbNotOpen()
@@ -202,6 +204,8 @@ program """
 
         self.addClient.triggered.connect(self.switchToAddClient)
         self.manageClients.triggered.connect(self.switchToManageClients)
+
+        self.managePlasterers.triggered.connect(self.switchToManagePlasterers)
         
         self.addPlasterer.triggered.connect(self.switchToAddPlasterer)
     
@@ -377,6 +381,13 @@ program """
         query = self.connection.initialTable()
         
         self.manageClientsL.showResults(query)
+
+
+    def switchToManagePlasterers(self):
+        self.stackedLayout.setCurrentIndex(8)
+        query = self.connection.initialTableP()
+
+        self.managePlasterersL.showResults(query)
     
     def clientsLayout(self):
         self.clientsLayoutWidget = ClientsMenuWidget()
@@ -394,6 +405,11 @@ program """
     def manageClientsLayout(self):
         self.manageClientsL = ManageClientsWidget(self)
         self.stackedLayout.addWidget(self.manageClientsL)
+
+    def managePlasterersLayout(self):
+
+        self.managePlasterersL = ManagePlasterersWidget(self)
+        self.stackedLayout.addWidget(self.managePlasterersL)
         
 
     def addClientLayout(self):

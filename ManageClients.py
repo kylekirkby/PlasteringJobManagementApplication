@@ -104,6 +104,9 @@ class ManageClientsWidget(QWidget):
         self.grid = QGridLayout()
         self.grid.setSpacing(10)
 
+        self.errorTextLabel = QLabel("Errors: ")
+        self.errorTextContentLabel = QLabel()
+
         self.firstNameEditLabel = QLabel("First Name")
         self.surnameEditLabel = QLabel("Surname")
         self.streetEditLabel = QLabel("Street")
@@ -136,6 +139,12 @@ class ManageClientsWidget(QWidget):
         self.countyEdit = QComboBox()
         self.countyEdit.addItems(self.counties)
 
+        self.titleLabel = QLabel("Title")
+
+        self.titleEdit = QComboBox()
+        self.titles = ["Mr","Mrs","Ms","Sir"]
+        self.titleEdit.addItems(self.titles)
+
         
         self.postCodeEdit = QLineEdit()
         self.emailEdit = QLineEdit()
@@ -144,6 +153,10 @@ class ManageClientsWidget(QWidget):
         self.savePushButton = QPushButton("Save Info")
         self.cancelPushButton = QPushButton("Cancel Edit")
 
+
+        self.grid.addWidget(self.titleLabel, 0,0)
+        self.grid.addWidget(self.titleEdit, 0, 1)
+        
         self.grid.addWidget(self.firstNameEditLabel, 1, 0)
         self.grid.addWidget(self.firstNameEdit, 1, 1)
 
@@ -167,9 +180,12 @@ class ManageClientsWidget(QWidget):
 
         self.grid.addWidget(self.phoneNumberEditLabel, 8, 0)
         self.grid.addWidget(self.phoneNumberEdit, 8, 1)
+
+        self.grid.addWidget(self.errorTextLabel, 9,0)
+        self.grid.addWidget(self.errorTextContentLabel, 9, 1)
         
-        self.grid.addWidget(self.cancelPushButton, 9, 0)
-        self.grid.addWidget(self.savePushButton, 9, 1)
+        self.grid.addWidget(self.cancelPushButton, 10, 0)
+        self.grid.addWidget(self.savePushButton, 10, 1)
 
         self.editClientGroupBox.setLayout(self.grid)
 
@@ -279,9 +295,10 @@ class ManageClientsWidget(QWidget):
                             
     def editClientPopulate(self, data):
 
-        clientId = data[0]
-        clientFirstName = data[2]
-        clientSurname = data[3]
+        currentId = data[0]
+        title = data[1]
+        firstName = data[2]
+        surname = data[3]
         street = data[4]
         town = data[5]
         county = data[6]
@@ -289,8 +306,13 @@ class ManageClientsWidget(QWidget):
         email = data[8]
         phoneNumber = data[9]
 
-        self.firstNameEdit.setText(clientFirstName)
-        self.surnameEdit.setText(clientSurname)
+        self.currentMemberId = currentId
+
+        self.titleIndex = self.titleEdit.findText(title)
+        self.titleEdit.setCurrentIndex(self.titleIndex)
+
+        self.firstNameEdit.setText(firstName)
+        self.surnameEdit.setText(surname)
         self.streetEdit.setText(street)
         self.townEdit.setText(town)
 
@@ -331,7 +353,34 @@ class ManageClientsWidget(QWidget):
 
 
     def addUpdatedDataToDb(self):
-        pass
+        county = str(self.countyEdit.currentText())
+        title = str(self.titleEdit.currentText())
+
+        values = {"ID" : self.currentMemberId,
+                    "Title": title,
+                   "FirstName": self.firstNameEdit.text(),
+                  "Surname": self.surnameEdit.text(),
+                  "Street": self.streetEdit.text(),
+                  "Town": self.townEdit.text(),
+                  "County": county,
+                  "PostCode": self.postCodeEdit.text(),
+                  "Email": self.emailEdit.text(),
+                   "PhoneNumber": self.phoneNumberEdit.text()}
+
+        clientAdded = self.connection.updateClient(values)
+
+        if clientAdded:
+
+            self.searchingClients()
+             
+            infoText = """ The clients information has been updated!"""
+            QMessageBox.information(self, "Client Info Updated!", infoText)
+            
+        else:
+            infoText = """ The client was not updated successfully! """
+
+            QMessageBox.critical(self, "Client Not Updated!", infoText)
+        
 
     def validateForm(self):
 

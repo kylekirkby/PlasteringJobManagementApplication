@@ -72,6 +72,35 @@ class SQLConnection:
                 return False
         else:
             return False
+
+    def updateClient(self, values):
+
+        query = QSqlQuery(self.db)
+
+        query.prepare("""
+UPDATE Client SET ClientTitle = :clientTitle, ClientFirstName = :clientFirstName, ClientSurname = :clientSurname,
+ClientAddrLine1 = :clientStreet, ClientAddrLine2 = :clientTown, ClientAddrLine3 = :clientCounty,
+ClientAddrLine4 = :clientPostCode, ClientEmail = :clientEmail, ClientPhoneNumber = :clientPhoneNumber
+WHERE ClientID = :clientID;
+""")
+        query.bindValue(":clientID",values["ID"])
+        query.bindValue(":clientTitle",values["Title"])
+        query.bindValue(":clientFirstName",values["FirstName"])
+        query.bindValue(":clientSurname",values["Surname"])
+        query.bindValue(":clientStreet",values["Street"])
+        query.bindValue(":clientTown",values["Town"])
+        query.bindValue(":clientCounty",values["County"])
+        query.bindValue(":clientPostCode",values["PostCode"])
+        query.bindValue(":clientEmail",values["Email"])
+        query.bindValue(":clientPhoneNumber",values["PhoneNumber"])
+
+
+        success = query.exec_()
+
+        if success:
+            return True
+        else:
+            return False
             
     def addClient(self, values):
 
@@ -141,6 +170,18 @@ PlastererAddrLine2,PlastererAddrLine3,PlastererAddrLine4,PlastererEmail,Plastere
         query.exec_()
 
         return query
+
+    def getAllPlasterers(self):
+
+        query = QSqlQuery(self.db)
+
+        query.prepare("SELECT * FROM Plasterer")
+
+        query.exec_()
+
+        return query
+
+    
     def initialTable(self):
 
         query = QSqlQuery(self.db)
@@ -148,6 +189,15 @@ PlastererAddrLine2,PlastererAddrLine3,PlastererAddrLine4,PlastererEmail,Plastere
         query.exec_()
 
         return query
+
+    def initialTableP(self):
+
+        query = QSqlQuery(self.db)
+        query.prepare("SELECT * FROM Plasterer WHERE 1=0")
+        query.exec_()
+
+        return query
+        
     
     def getClientData(self, clientID):
 ##
