@@ -73,6 +73,7 @@ program """
         self.addClientL.addConnection(self.connection)
         self.addPlastererL.addConnection(self.connection)
         self.manageClientsL.addConnection(self.connection)
+        self.managePlasterersL.addConnection(self.connection)
 
        
     def dbNotOpen(self):
@@ -386,6 +387,7 @@ program """
 
     def switchToManagePlasterers(self):
         self.stackedLayout.setCurrentIndex(8)
+        
         query = self.connection.initialTableP()
 
         self.managePlasterersL.showResults(query)

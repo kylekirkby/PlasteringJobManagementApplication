@@ -373,6 +373,10 @@ class ManageClientsWidget(QWidget):
         if clientAdded:
 
             self.searchingClients()
+
+            #clear table
+            query = self.connection.initialTable()
+            self.showResults(query)
              
             infoText = """ The clients information has been updated!"""
             QMessageBox.information(self, "Client Info Updated!", infoText)

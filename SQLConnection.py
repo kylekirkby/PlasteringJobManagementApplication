@@ -102,6 +102,38 @@ WHERE ClientID = :clientID;
             return True
         else:
             return False
+        
+    def updatePlasterer(self, values):
+
+        query = QSqlQuery(self.db)
+
+        query.prepare("""
+UPDATE Plasterer SET PlastererTitle = :plastererTitle, PlastererFirstName = :plastererFirstName, PlastererSurname = :plastererSurname,
+PlastererAddrLine1 = :plastererStreet, PlastererAddrLine2 = :plastererTown, PlastererAddrLine3 = :plastererCounty,
+PlastererAddrLine4 = :plastererPostCode, PlastererEmail = :plastererEmail, PlastererPhoneNumber = :plastererPhoneNumber, PlastererDailyRate =
+:plastererDailyRate
+WHERE PlastererID = :plastererID;
+""")
+        query.bindValue(":plastererID",values["ID"])
+        query.bindValue(":plastererTitle",values["Title"])
+        query.bindValue(":plastererFirstName",values["FirstName"])
+        query.bindValue(":plastererSurname",values["Surname"])
+        query.bindValue(":plastererStreet",values["Street"])
+        query.bindValue(":plastererTown",values["Town"])
+        query.bindValue(":plastererCounty",values["County"])
+        query.bindValue(":plastererPostCode",values["PostCode"])
+        query.bindValue(":plastererEmail",values["Email"])
+        query.bindValue(":plastererPhoneNumber",values["PhoneNumber"])
+        query.bindValue(":plastererDailyRate", values["DailyRate"])
+
+
+        success = query.exec_()
+
+        if success:
+            self.db.commit()
+            return True
+        else:
+            return False
             
     def addClient(self, values):
 
@@ -219,6 +251,19 @@ PlastererAddrLine2,PlastererAddrLine3,PlastererAddrLine4,PlastererEmail,Plastere
             return data
             
 
+    def getPlastererData(self, ID):
+
+        with sqlite3.connect(self.path) as db:
+
+            cursor = db.cursor()
+            sql = "SELECT * FROM Plasterer WHERE PlastererID = ?"
+            values = (ID,)
+            cursor.execute(sql, values)
+            data = cursor.fetchone()
+            db.commit()
+
+            return data
+            
         
         
     

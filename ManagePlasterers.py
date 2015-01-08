@@ -115,6 +115,7 @@ class ManagePlasterersWidget(QWidget):
         self.postCodeEditLabel = QLabel("Post Code")
         self.emailEditLabel = QLabel("Email")
         self.phoneNumberEditLabel = QLabel("Phone Number")
+        self.dailyRateLabel = QLabel("Daily Rate")
 
         self.firstNameEdit = QLineEdit()
         self.surnameEdit = QLineEdit()
@@ -145,10 +146,12 @@ class ManagePlasterersWidget(QWidget):
         self.titles = ["Mr","Mrs","Ms","Sir"]
         self.titleEdit.addItems(self.titles)
 
+
         
         self.postCodeEdit = QLineEdit()
         self.emailEdit = QLineEdit()
         self.phoneNumberEdit = QLineEdit()
+        self.dailyRateEdit = QLineEdit()
 
         self.savePushButton = QPushButton("Save Info")
         self.cancelPushButton = QPushButton("Cancel Edit")
@@ -181,11 +184,14 @@ class ManagePlasterersWidget(QWidget):
         self.grid.addWidget(self.phoneNumberEditLabel, 8, 0)
         self.grid.addWidget(self.phoneNumberEdit, 8, 1)
 
-        self.grid.addWidget(self.errorTextLabel, 9,0)
-        self.grid.addWidget(self.errorTextContentLabel, 9, 1)
+        self.grid.addWidget(self.dailyRateLabel, 9, 0)
+        self.grid.addWidget(self.dailyRateEdit, 9, 1)
+
+        self.grid.addWidget(self.errorTextLabel, 10,0)
+        self.grid.addWidget(self.errorTextContentLabel, 10, 1)
         
-        self.grid.addWidget(self.cancelPushButton, 10, 0)
-        self.grid.addWidget(self.savePushButton, 10, 1)
+        self.grid.addWidget(self.cancelPushButton, 11, 0)
+        self.grid.addWidget(self.savePushButton, 11, 1)
 
         self.editPlastererGroupBox.setLayout(self.grid)
 
@@ -212,8 +218,6 @@ class ManagePlasterersWidget(QWidget):
         
     def showAllPlasterersInTable(self):
         
-        print("Showing Plasterers")
-
         query = self.connection.getAllPlasterers()
 
         self.showResults(query)
@@ -244,6 +248,7 @@ class ManagePlasterersWidget(QWidget):
         self.postCodeEdit.clear()
         self.emailEdit.clear()
         self.phoneNumberEdit.clear()
+        self.dailyRateEdit.clear()
 
         self.firstNameEdit.setStyleSheet("")
         self.surnameEdit.setStyleSheet("")
@@ -253,6 +258,7 @@ class ManagePlasterersWidget(QWidget):
         self.postCodeEdit.setStyleSheet("")
         self.emailEdit.setStyleSheet("")
         self.phoneNumberEdit.setStyleSheet("")
+        self.dailyRateEdit.setStyleSheet("")
 
 
         self.results_table.selectionModel().clearSelection()
@@ -307,6 +313,7 @@ class ManagePlasterersWidget(QWidget):
         postCode = data[7]
         email = data[8]
         phoneNumber = data[9]
+        dailyRate = data[10]
 
         self.currentMemberId = currentId
 
@@ -324,6 +331,7 @@ class ManagePlasterersWidget(QWidget):
         self.postCodeEdit.setText(postCode)
         self.emailEdit.setText(email)
         self.phoneNumberEdit.setText(phoneNumber)
+        self.dailyRateEdit.setText(str(dailyRate))
 
         
 
@@ -350,6 +358,7 @@ class ManagePlasterersWidget(QWidget):
         self.postCodeEdit.textChanged.connect(self.validatePostCode)
         self.emailEdit.textChanged.connect(self.validateEmail)
         self.phoneNumberEdit.textChanged.connect(self.validatePhoneNumber)
+        self.dailyRateEdit.textChanged.connect(self.validateDailyRate)
         self.savePushButton.clicked.connect(self.validateForm)
         self.cancelPushButton.clicked.connect(self.searchingPlasterers)
 
@@ -367,13 +376,18 @@ class ManagePlasterersWidget(QWidget):
                   "County": county,
                   "PostCode": self.postCodeEdit.text(),
                   "Email": self.emailEdit.text(),
-                   "PhoneNumber": self.phoneNumberEdit.text()}
+                   "PhoneNumber": self.phoneNumberEdit.text(),
+                  "DailyRate" : self.dailyRateEdit.text()}
 
         plastererAdded = self.connection.updatePlasterer(values)
 
         if plastererAdded:
 
             self.searchingPlasterers()
+
+            #clear the table
+            query = self.connection.initialTableP()
+            self.showResults(query)
              
             infoText = """ The plasterers information has been updated!"""
             QMessageBox.information(self, "Plasterer Info Updated!", infoText)
@@ -393,6 +407,7 @@ class ManagePlasterersWidget(QWidget):
         self.checkPostCode = self.validatePostCode()
         self.checkPhoneNumber = self.validatePhoneNumber()
         self.checkEmail = self.validateEmail()
+        self.checkDailyRate = self.validateDailyRate()
 
         self.errorMsg = ""
 
@@ -410,6 +425,8 @@ class ManagePlasterersWidget(QWidget):
             self.errorMsg += "Invalid Phone Number Format, "
         if self.checkEmail == False:
             self.errorMsg += "Invalid Email Format, "
+        if self.checkDailyRate == False:
+            self.errorMsg += "Invalid Daily Rate Format"
         
 
         self.errorTextContentLabel.setText(self.errorMsg)
@@ -420,6 +437,8 @@ class ManagePlasterersWidget(QWidget):
             return True
         else:
             return False
+
+    
 
     def validateFirstName(self):
 
@@ -511,7 +530,21 @@ class ManagePlasterersWidget(QWidget):
         else:
             self.emailEdit.setStyleSheet("background-color:#f6989d;")
             return False
+
+    def validateDailyRate(self):
         
+        text = self.dailyRateEdit.text()
+
+        dailyRateRegEx = re.compile("[0-9]+\.[0-9]+")
+
+        match = dailyRateRegEx.match(text.upper())
+
+        if match:
+            self.dailyRateEdit.setStyleSheet("background-color:#c4df9b;")
+            return True
+        else:
+            self.dailyRateEdit.setStyleSheet("background-color:#f6989d;")
+            return False
 
 
 
