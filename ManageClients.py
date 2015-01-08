@@ -242,6 +242,7 @@ class ManageClientsWidget(QWidget):
         self.postCodeEdit.clear()
         self.emailEdit.clear()
         self.phoneNumberEdit.clear()
+        self.errorTextContentLabel.clear()
 
         self.firstNameEdit.setStyleSheet("")
         self.surnameEdit.setStyleSheet("")

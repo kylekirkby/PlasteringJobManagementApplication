@@ -98,6 +98,7 @@ WHERE ClientID = :clientID;
         success = query.exec_()
 
         if success:
+            self.db.commit()
             return True
         else:
             return False
@@ -235,18 +236,25 @@ PlastererAddrLine2,PlastererAddrLine3,PlastererAddrLine4,PlastererEmail,Plastere
             query = QSqlQuery(self.db)
 
             query.prepare("""SELECT * FROM Client WHERE
-        ClientFirstName LIKE '%'||:searchString||'%' OR
-        ClientSurname LIKE '%'||:searchString||'%' OR
-        ClientAddrLine1 LIKE '%'||:searchString||'%' OR
-        ClientAddrLine2 LIKE '%'||:searchString||'%' OR
-        ClientAddrLine3 LIKE '%'||:searchString||'%' OR
-        ClientAddrLine4 LIKE '%'||:searchString||'%' OR
-        ClientPhoneNumber LIKE '%'||:searchString||'%' OR
-        ClientEmail LIKE '%'||:searchString||'%'
+       ClientFirstName LIKE '%'||:searchString||'%' OR
+       ClientEmail LIKE '%'||:searchString2||'%' OR
+       ClientSurname LIKE '%'||:searchString3||'%' OR
+       ClientAddrLine1 LIKE '%'||:searchString4||'%' OR
+       ClientAddrLine2 LIKE '%'||:searchString5||'%' OR
+       ClientAddrLine3 LIKE '%'||:searchString6||'%' OR
+       ClientAddrLine4 LIKE '%'||:searchString7||'%' OR
+       ClientPhoneNumber LIKE '%'||:searchString8||'%'
         """)
         
 
             query.bindValue(":searchString", searchText)
+            query.bindValue(":searchString2", searchText)
+            query.bindValue(":searchString3", searchText)
+            query.bindValue(":searchString4", searchText)
+            query.bindValue(":searchString5", searchText)
+            query.bindValue(":searchString6", searchText)
+            query.bindValue(":searchString7", searchText)
+            query.bindValue(":searchString8", searchText)
 
             success = query.exec_()
 

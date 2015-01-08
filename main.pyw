@@ -219,6 +219,7 @@ program """
         self.clientsLayoutWidget.manageClientsPushButton.clicked.connect(self.switchToManageClients)
         
         self.plasterersLayoutWidget.addPlastererPushButton.clicked.connect(self.switchToAddPlasterer)
+        self.plasterersLayoutWidget.managePlasterersPushButton.clicked.connect(self.switchToManagePlasterers)
         self.plasterersLayoutWidget.backButton.clicked.connect(self.switchToMainMenu)
 
         self.jobsPushButton.clicked.connect(self.switchToJobsMenu)

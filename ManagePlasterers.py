@@ -211,6 +211,8 @@ class ManagePlasterersWidget(QWidget):
         self.showResults(query)
         
     def showAllPlasterersInTable(self):
+        
+        print("Showing Plasterers")
 
         query = self.connection.getAllPlasterers()
 
