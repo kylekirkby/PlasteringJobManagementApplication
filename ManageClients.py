@@ -69,6 +69,10 @@ class ManageClientsWidget(QWidget):
 
         header = QHeaderView(Qt.Horizontal, self.results_table)
         header.setStretchLastSection(True)
+        self.results_table.resizeRowsToContents()
+        self.results_table.resizeColumnsToContents()
+        self.results_table.verticalHeader().setVisible(False)
+
 
         #self.results_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         

@@ -14,7 +14,7 @@ from AddClient import *
 from AddPlasterer import *
 from ManageClients import *
 from ManagePlasterers import *
-
+from ManageJobs import *
 
 class MainWindow(QMainWindow):
     """ This is the main window class for the plastering job management
@@ -60,6 +60,7 @@ program """
         self.jobsLayout()
         self.manageClientsLayout()
         self.managePlasterersLayout()
+        self.manageJobsLayout()
 
         #Disable database related actions
         self.dbNotOpen()
@@ -201,6 +202,7 @@ program """
         self.closeDatabase.triggered.connect(self.closeDatabaseConn)
         self.newDbPushButton.clicked.connect(self.createNewDatabase)
         self.openDbPushButton.clicked.connect(self.openDatabaseConn)
+        self.viewJobs.triggered.connect(self.switchToManageJobs)
 
 
         self.addClient.triggered.connect(self.switchToAddClient)
@@ -229,6 +231,8 @@ program """
         
         self.addClientL.cancelFormButton.clicked.connect(self.switchToClientsMenu)
         self.addPlastererL.cancelFormButton.clicked.connect(self.switchToPlasterersMenu)
+
+        self.jobsLayoutWidget.manageJobsPushButton.clicked.connect(self.switchToManageJobs)
 
 
         
@@ -391,6 +395,10 @@ program """
         query = self.connection.initialTableP()
 
         self.managePlasterersL.showResults(query)
+
+    def switchToManageJobs(self):
+        self.stackedLayout.setCurrentIndex(9)
+        
     
     def clientsLayout(self):
         self.clientsLayoutWidget = ClientsMenuWidget()
@@ -413,6 +421,10 @@ program """
 
         self.managePlasterersL = ManagePlasterersWidget(self)
         self.stackedLayout.addWidget(self.managePlasterersL)
+
+    def manageJobsLayout(self):
+        self.manageJobsL = ManageJobsWidget(self)
+        self.stackedLayout.addWidget(self.manageJobsL)
         
 
     def addClientLayout(self):

@@ -312,6 +312,67 @@ PlastererAddrLine2,PlastererAddrLine3,PlastererAddrLine4,PlastererEmail,Plastere
 
                 return query
 
+    def getPlastererData(self, ID):
+
+        with sqlite3.connect(self.path) as db:
+
+            cursor = db.cursor()
+            sql = "SELECT * FROM Plasterer WHERE PlastererID = ?"
+            values = (ID,)
+            cursor.execute(sql, values)
+            data = cursor.fetchone()
+            db.commit()
+
+            return data
+            
+        
+        
+    
+
+    def getSearchQuery2(self, queryText):
+
+        searchText = queryText
+
+        if searchText == "":
+            query = self.initialTable()
+
+            return query
+        else:
+
+            query = QSqlQuery(self.db)
+
+            query.prepare("""SELECT * FROM Plasterer WHERE
+       PlastererFirstName LIKE '%'||:searchString||'%' OR
+       PlastererEmail LIKE '%'||:searchString2||'%' OR
+       PlastererSurname LIKE '%'||:searchString3||'%' OR
+       PlastererAddrLine1 LIKE '%'||:searchString4||'%' OR
+       PlastererAddrLine2 LIKE '%'||:searchString5||'%' OR
+       PlastererAddrLine3 LIKE '%'||:searchString6||'%' OR
+       PlastererAddrLine4 LIKE '%'||:searchString7||'%' OR
+       PlastererPhoneNumber LIKE '%'||:searchString8||'%'
+        """)
+        
+
+            query.bindValue(":searchString", searchText)
+            query.bindValue(":searchString2", searchText)
+            query.bindValue(":searchString3", searchText)
+            query.bindValue(":searchString4", searchText)
+            query.bindValue(":searchString5", searchText)
+            query.bindValue(":searchString6", searchText)
+            query.bindValue(":searchString7", searchText)
+            query.bindValue(":searchString8", searchText)
+
+            success = query.exec_()
+
+            if success:
+                return query
+            else:
+                
+                error =  query.lastError()
+                print(error.text())
+
+                return query
+
                 
     def closeEvent(self,event):
         

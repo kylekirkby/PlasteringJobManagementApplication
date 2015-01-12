@@ -7,9 +7,9 @@ from SQLConnection import *
 
 import re
 
-class ManagePlasterersWidget(QWidget):
+class ManageJobsWidget(QWidget):
 
-    """ This is the add plasterer widget """
+    """ This is the manage jobs widget """
 
     def __init__(self, parent):
 
@@ -40,9 +40,9 @@ class ManagePlasterersWidget(QWidget):
 
     def layout(self):
 
-        self.searchPlasterersGroup = QGroupBox("Search Plasterers")
+        self.searchPlasterersGroup = QGroupBox("Search Jobs")
 
-        self.showAllPlasterersPushButton = QPushButton("Show All Plasterers")
+        self.showAllPlasterersPushButton = QPushButton("Show All Jobs")
 
         self.showAllPlasterersPushButton.setMaximumWidth(100)
 
@@ -63,7 +63,7 @@ class ManagePlasterersWidget(QWidget):
         self.searchWidget.setLayout(self.searchL)
 
         
-        self.tableGroup = QGroupBox("Plasterers")
+        self.tableGroup = QGroupBox("Jobs")
         
         self.results_table = QTableView()
 
@@ -105,11 +105,15 @@ class ManagePlasterersWidget(QWidget):
 
     def editPlasterer(self):
 
-        self.editPlastererGroupBox = QGroupBox("Edit Plasterer Info")
-        self.editPlastererGroupBox.setEnabled(False)
+        self.jobDetailsGroupBox = QGroupBox("Job")
+        self.jobDetailsGroupBox.setEnabled(False)
+
+        self.clientJobDetailsGroupBox = QGroupBox("Client")
+        
         self.grid = QGridLayout()
         self.grid.setSpacing(10)
 
+        
         self.errorTextLabel = QLabel("Errors: ")
         self.errorTextContentLabel = QLabel()
 
@@ -121,12 +125,68 @@ class ManagePlasterersWidget(QWidget):
         self.postCodeEditLabel = QLabel("Post Code")
         self.emailEditLabel = QLabel("Email")
         self.phoneNumberEditLabel = QLabel("Phone Number")
-        self.dailyRateLabel = QLabel("Daily Rate")
+        
+        self.firstNameLabel = QLabel()
+        self.surnameLabel = QLabel()
+        self.streetLabel = QLabel()
+        self.townLabel = QLabel()
+        self.countyLabel = QLabel()
+        self.postCodeLabel = QLabel()
+        self.emailLabel  = QLabel()
+        self.phoneNumberLabel = QLabel()
 
-        self.firstNameEdit = QLineEdit()
-        self.surnameEdit = QLineEdit()
-        self.streetEdit = QLineEdit()
-        self.townEdit = QLineEdit()
+        self.grid.addWidget(self.firstNameEditLabel, 1, 0)
+        self.grid.addWidget(self.firstNameLabel, 1, 1)
+
+        self.grid.addWidget(self.surnameEditLabel, 2, 0)
+        self.grid.addWidget(self.surnameLabel, 2, 1)
+
+        self.grid.addWidget(self.streetEditLabel, 3, 0)
+        self.grid.addWidget(self.streetLabel, 3, 1)
+
+        self.grid.addWidget(self.townEditLabel, 4, 0)
+        self.grid.addWidget(self.townLabel, 4, 1)
+
+        self.grid.addWidget(self.countyEditLabel, 5, 0)
+        self.grid.addWidget(self.countyLabel, 5, 1)
+
+        self.grid.addWidget(self.postCodeEditLabel, 6, 0)
+        self.grid.addWidget(self.postCodeLabel, 6, 1)
+
+        self.grid.addWidget(self.emailEditLabel, 7, 0)
+        self.grid.addWidget(self.emailLabel, 7, 1)
+
+        self.grid.addWidget(self.phoneNumberEditLabel, 8, 0)
+        self.grid.addWidget(self.phoneNumberLabel, 8, 1)
+
+
+        self.clientJobDetailsGroupBox.setLayout(self.grid)
+
+
+
+
+
+         #job group box widgets
+
+        self.jobInfoGroupBox = QGroupBox("Job Details")
+        
+        self.jobGrid = QGridLayout()
+        self.jobGrid.setSpacing(10)
+
+        
+
+        self.jobStreetEditLabel = QLabel("Job Street")
+        self.jobTownEditLabel = QLabel("Job Town")
+        self.jobCountyEditLabel = QLabel("Job County")
+        self.jobPostCodeEditLabel = QLabel("Job Post Code")
+        
+        self.jobDaysWorkedLabel = QLabel("Days worked")
+        self.jobStatusLabel = QLabel("Status")
+
+        
+        self.jobStreetEdit = QLineEdit()
+        self.jobTownEdit = QLineEdit()
+        self.jobPostCodeEdit = QLineEdit()
         self.counties = ['Aberdeenshire', 'Angus', 'Argyll and Bute', 'Ayrshire', 'Ayrshire and Arran',
                  'Banffshire', 'Bedfordshire', 'Berkshire','Berwickshire', 'Buckinghamshire',
                  'Caithness', 'Cambridgeshire', 'Ceredigion', 'Cheshire', 'City of Bristol', 'City of Edinburgh',
@@ -143,67 +203,73 @@ class ManagePlasterersWidget(QWidget):
 
 
         
-        self.countyEdit = QComboBox()
-        self.countyEdit.addItems(self.counties)
+        self.jobCountyEdit = QComboBox()
+        self.jobCountyEdit.addItems(self.counties)
 
-        self.titleLabel = QLabel("Title")
+        self.jobStatusLabelContent = QLabel()
+        self.jobDaysWorkedLabelContent = QLabel()
+        
 
-        self.titleEdit = QComboBox()
-        self.titles = ["Mr","Mrs","Ms","Sir"]
-        self.titleEdit.addItems(self.titles)
+        self.jobGrid.addWidget(self.jobStreetEditLabel, 1, 0)
+        self.jobGrid.addWidget(self.jobStreetEdit, 1, 1)
 
+        self.jobGrid.addWidget(self.jobTownEditLabel, 2, 0)
+        self.jobGrid.addWidget(self.jobTownEdit, 2, 1)
+
+        self.jobGrid.addWidget(self.jobCountyEditLabel, 3, 0)
+        self.jobGrid.addWidget(self.jobCountyEdit, 3 ,1)
+
+        self.jobGrid.addWidget(self.jobPostCodeEditLabel, 4, 0)
+        self.jobGrid.addWidget(self.jobPostCodeEdit, 4, 1)
+
+        self.jobGrid.addWidget(self.jobStatusLabel, 5, 0)
+        self.jobGrid.addWidget(self.jobStatusLabelContent, 5, 1)
+
+        self.jobGrid.addWidget(self.jobDaysWorkedLabel, 6, 0)
+        self.jobGrid.addWidget(self.jobDaysWorkedLabelContent, 6, 1)
+        
+        
+        self.jobInfoGroupBox.setLayout(self.jobGrid)
+        
+
+        self.hLayout = QHBoxLayout()
+        self.hLayout.addWidget(self.clientJobDetailsGroupBox)
+        self.hLayout.addWidget(self.jobInfoGroupBox)
+        
+        self.hWidget = QWidget()
+        self.hWidget.setLayout(self.hLayout)
+
+        self.jobFunctionsGroupBox = QGroupBox("Job Actions")
+
+        ##invoice section
+        self.generateInvoicePushButton = QPushButton("Generate Invoice")
+        self.viewInvoicePushButton = QPushButton("View Invoice")
+        self.printInvoicePushButton = QPushButton("Print Invoice")
+        self.emailInvoicePushButton = QPushButton("Email Invoice")
+
+        self.hLayout = QHBoxLayout()
+        self.hLayout.addWidget(self.generateInvoicePushButton)
+        self.hLayout.addWidget(self.viewInvoicePushButton)
+        self.hLayout.addWidget(self.printInvoicePushButton)
+        self.hLayout.addWidget(self.emailInvoicePushButton)
+
+        self.jobFunctionsGroupBox.setLayout(self.hLayout)
 
         
-        self.postCodeEdit = QLineEdit()
-        self.emailEdit = QLineEdit()
-        self.phoneNumberEdit = QLineEdit()
-        self.dailyRateEdit = QLineEdit()
-
-        self.savePushButton = QPushButton("Save Info")
-        self.cancelPushButton = QPushButton("Cancel Edit")
-
-
-        self.grid.addWidget(self.titleLabel, 0,0)
-        self.grid.addWidget(self.titleEdit, 0, 1)
+        self.vLayout = QVBoxLayout()
+        self.vLayout.addWidget(self.jobFunctionsGroupBox)
+        self.vLayout.addWidget(self.hWidget)
         
-        self.grid.addWidget(self.firstNameEditLabel, 1, 0)
-        self.grid.addWidget(self.firstNameEdit, 1, 1)
 
-        self.grid.addWidget(self.surnameEditLabel, 2, 0)
-        self.grid.addWidget(self.surnameEdit, 2, 1)
+        self.jobDetailsGroupBox.setLayout(self.vLayout)
 
-        self.grid.addWidget(self.streetEditLabel, 3, 0)
-        self.grid.addWidget(self.streetEdit, 3, 1)
 
-        self.grid.addWidget(self.townEditLabel, 4, 0)
-        self.grid.addWidget(self.townEdit, 4, 1)
 
-        self.grid.addWidget(self.countyEditLabel, 5, 0)
-        self.grid.addWidget(self.countyEdit, 5, 1)
-
-        self.grid.addWidget(self.postCodeEditLabel, 6, 0)
-        self.grid.addWidget(self.postCodeEdit, 6, 1)
-
-        self.grid.addWidget(self.emailEditLabel, 7, 0)
-        self.grid.addWidget(self.emailEdit, 7, 1)
-
-        self.grid.addWidget(self.phoneNumberEditLabel, 8, 0)
-        self.grid.addWidget(self.phoneNumberEdit, 8, 1)
-
-        self.grid.addWidget(self.dailyRateLabel, 9, 0)
-        self.grid.addWidget(self.dailyRateEdit, 9, 1)
-
-        self.grid.addWidget(self.errorTextLabel, 10,0)
-        self.grid.addWidget(self.errorTextContentLabel, 10, 1)
-        
-        self.grid.addWidget(self.cancelPushButton, 11, 0)
-        self.grid.addWidget(self.savePushButton, 11, 1)
-
-        self.editPlastererGroupBox.setLayout(self.grid)
 
         self.newL = QVBoxLayout()
 
-        self.newL.addWidget(self.editPlastererGroupBox)
+        self.newL.addWidget(self.jobDetailsGroupBox)
+        
 
         self.userInfoEdit = QWidget()
         self.userInfoEdit.setLayout(self.newL)

@@ -17,7 +17,6 @@ class JobsMenuWidget(QWidget):
 ##        p = self.palette()
 ##        p.setColor(self.backgroundRole(), Qt.white)
 ##        self.setPalette(p)
-        self.setStyleSheet("QWidget{background-image: url(./clients.jpg);background-size:100%;}")
 
         self.setStyleSheet("""QPushButton[buttonClass=home] {
                            font-size: 16px; background-color: rgba(188, 188, 188, 50);
