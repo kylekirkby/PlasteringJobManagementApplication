@@ -284,7 +284,8 @@ class ManageClientsWidget(QWidget):
         if numberOfRowsSelected == 1:
             if self.currentRow != rows[0]:
                 self.currentRow = rows[0]
-                cliID = int(self.currentRow) + 1
+                #cliID = int(self.currentRow) + 1
+                cliID = self.model.record(self.currentRow).field(0).value()
                 data = self.connection.getClientData(cliID)
 
 

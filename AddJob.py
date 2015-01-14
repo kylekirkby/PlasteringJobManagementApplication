@@ -6,13 +6,13 @@ import re
 
 class AddJobWidget(QWidget):
 
-    """ This is the add client widget """
+    """ This is the add job widget """
 
     def __init__(self, parent):
 
         super().__init__()
         
-        self.setProperty("addClientClass","True")
+        self.setProperty("addJobClass","True")
 
         self.connection = None
 
@@ -22,7 +22,7 @@ class AddJobWidget(QWidget):
         
         self.setLayout(self.mainLayout)
 
-        self.setStyleSheet("QWidget[addClientClass=True]{padding:100px;}")
+        self.setStyleSheet("QWidget[addJobClass=True]{padding:100px;}")
 
     def addConnection(self, connection):
         
@@ -32,150 +32,150 @@ class AddJobWidget(QWidget):
 
     def validateFirstName(self):
 
-        text = self.clientFirstName.text()
+        text = self.jobFirstName.text()
         length = len(text)
 
         if length > 2:
-            self.clientFirstName.setStyleSheet("background-color:#c4df9b;")
+            self.jobFirstName.setStyleSheet("background-color:#c4df9b;")
             return True
         else:
-            self.clientFirstName.setStyleSheet("background-color:#f6989d;")
+            self.jobFirstName.setStyleSheet("background-color:#f6989d;")
             return False
 
     def validateSurname(self):
 
-        text = self.clientSurname.text()
+        text = self.jobSurname.text()
         length = len(text)
 
         if length > 2:
-            self.clientSurname.setStyleSheet("background-color:#c4df9b;")
+            self.jobSurname.setStyleSheet("background-color:#c4df9b;")
             return True
         else:
-            self.clientSurname.setStyleSheet("background-color:#f6989d;")
+            self.jobSurname.setStyleSheet("background-color:#f6989d;")
             return False
 
     def validateStreet(self):
 
-        text = self.clientStreet.text()
+        text = self.jobStreet.text()
         length = len(text)
 
         if length > 5:
-            self.clientStreet.setStyleSheet("background-color:#c4df9b;")
+            self.jobStreet.setStyleSheet("background-color:#c4df9b;")
             return True
         else:
-            self.clientStreet.setStyleSheet("background-color:#f6989d;")
+            self.jobStreet.setStyleSheet("background-color:#f6989d;")
             return False
 
 
     def validateTown(self):
         
-        text = self.clientTown.text()
+        text = self.jobTown.text()
         length = len(text)
 
         if length > 3:
-            self.clientTown.setStyleSheet("background-color:#c4df9b;")
+            self.jobTown.setStyleSheet("background-color:#c4df9b;")
             return True
         else:
-            self.clientTown.setStyleSheet("background-color:#f6989d;")
+            self.jobTown.setStyleSheet("background-color:#f6989d;")
             return False
 
 
     def validatePostCode(self):
         
-        text = self.clientPostCode.text()
+        text = self.jobPostCode.text()
 
         postCodeRegEx = re.compile("[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}")
 
         match = postCodeRegEx.match(text.upper())
 
         if match:
-            self.clientPostCode.setStyleSheet("background-color:#c4df9b;")
+            self.jobPostCode.setStyleSheet("background-color:#c4df9b;")
             return True
         else:
-            self.clientPostCode.setStyleSheet("background-color:#f6989d;")
+            self.jobPostCode.setStyleSheet("background-color:#f6989d;")
             return False
 
 
     def validatePhoneNumber(self):
-        text = self.clientPhoneNumber.text()
+        text = self.jobPhoneNumber.text()
         length = len(text)
 
         if length >= 11:
-            self.clientPhoneNumber.setStyleSheet("background-color:#c4df9b;")
+            self.jobPhoneNumber.setStyleSheet("background-color:#c4df9b;")
             return True
         else:
-            self.clientPhoneNumber.setStyleSheet("background-color:#f6989d;")
+            self.jobPhoneNumber.setStyleSheet("background-color:#f6989d;")
             return False
 
     def validateEmail(self):
-        text = self.clientEmail.text()
+        text = self.jobEmail.text()
 
         emailRegEx = re.compile("^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$")
 
         match = emailRegEx.match(text)
 
         if match:
-            self.clientEmail.setStyleSheet("background-color:#c4df9b;")
+            self.jobEmail.setStyleSheet("background-color:#c4df9b;")
             return True
         else:
-            self.clientEmail.setStyleSheet("background-color:#f6989d;")
+            self.jobEmail.setStyleSheet("background-color:#f6989d;")
             return False
 
     def clearForm(self):
         
-        self.clientTitle.setCurrentIndex(0)
-        self.clientFirstName.clear()
-        self.clientSurname.clear()
-        self.clientStreet.clear()
-        self.clientTown.clear()
-        self.clientCounty.setCurrentIndex(0)
-        self.clientPostCode.clear()
-        self.clientPhoneNumber.clear()
-        self.clientEmail.clear()
+        self.jobTitle.setCurrentIndex(0)
+        self.jobFirstName.clear()
+        self.jobSurname.clear()
+        self.jobStreet.clear()
+        self.jobTown.clear()
+        self.jobCounty.setCurrentIndex(0)
+        self.jobPostCode.clear()
+        self.jobPhoneNumber.clear()
+        self.jobEmail.clear()
 
-        self.clientFirstName.setStyleSheet("background-color:#FFF;")
-        self.clientSurname.setStyleSheet("background-color:#FFF;")
-        self.clientStreet.setStyleSheet("background-color:#FFF;")
-        self.clientTown.setStyleSheet("background-color:#FFF;")
-        self.clientPostCode.setStyleSheet("background-color:#FFF;")
-        self.clientPhoneNumber.setStyleSheet("background-color:#FFF;")
-        self.clientEmail.setStyleSheet("background-color:#FFF;")
+        self.jobFirstName.setStyleSheet("background-color:#FFF;")
+        self.jobSurname.setStyleSheet("background-color:#FFF;")
+        self.jobStreet.setStyleSheet("background-color:#FFF;")
+        self.jobTown.setStyleSheet("background-color:#FFF;")
+        self.jobPostCode.setStyleSheet("background-color:#FFF;")
+        self.jobPhoneNumber.setStyleSheet("background-color:#FFF;")
+        self.jobEmail.setStyleSheet("background-color:#FFF;")
 
         self.errorTextContentLabel.setText("None")
         
 
-    def addClientToDatabase(self):
+    def addJobToDatabase(self):
 
-        county = str(self.clientCounty.currentText())
-        title = str(self.clientTitle.currentText())
+        county = str(self.jobCounty.currentText())
+        title = str(self.jobTitle.currentText())
 
         values = { "Title": title,
-                   "FirstName": self.clientFirstName.text(),
-                  "Surname": self.clientSurname.text(),
-                  "Street": self.clientStreet.text(),
-                  "Town": self.clientTown.text(),
+                   "FirstName": self.jobFirstName.text(),
+                  "Surname": self.jobSurname.text(),
+                  "Street": self.jobStreet.text(),
+                  "Town": self.jobTown.text(),
                   "County": county,
-                  "PostCode": self.clientPostCode.text(),
-                  "Email": self.clientEmail.text(),
-                   "PhoneNumber": self.clientPhoneNumber.text()}
+                  "PostCode": self.jobPostCode.text(),
+                  "Email": self.jobEmail.text(),
+                   "PhoneNumber": self.jobPhoneNumber.text()}
 
-        clientAdded = self.connection.addClient(values)
+        jobAdded = self.connection.addJob(values)
 
-        if clientAdded:
+        if jobAdded:
 
             self.clearForm()
-            self.parent.switchToClientsMenu()
+            self.parent.switchToJobsMenu()
             
-            infoText = """ The New client has been added to the database!"""
-            QMessageBox.information(self, "Client Added", infoText)
+            infoText = """ The New job has been added to the database!"""
+            QMessageBox.information(self, "Job Added", infoText)
             
         else:
-            infoText = """ The New client was not added to the database successfully! """
+            infoText = """ The New job was not added to the database successfully! """
 
-            QMessageBox.critical(self, "Client Not Added", infoText)
+            QMessageBox.critical(self, "Job Not Added", infoText)
             
     
-    def validateAddClientForm(self):
+    def validateAddJobForm(self):
 
         self.checkFirstName = self.validateFirstName()
         self.checkSurname = self.validateSurname()
@@ -207,7 +207,7 @@ class AddJobWidget(QWidget):
         
 
         if self.errorMsg == "":
-            self.addClientToDatabase()
+            self.addJobToDatabase()
             return True
         else:
             return False
@@ -228,43 +228,42 @@ class AddJobWidget(QWidget):
                          'Stirling and Falkirk', 'Suffolk', 'Surrey', 'Sutherland', 'Tweeddale', 'Tyne and Wear', 'Warwickshire', 'West Glamorgan',
                          'West Lothian', 'West Midlands', 'West Sussex', 'West Yorkshire', 'Western Isles', 'Wiltshire', 'Worcestershire']
 
-        self.clientTitleLabel = QLabel('Title')
-        self.clientFirstNameLabel = QLabel('First Name')
-        self.clientSurnameLabel = QLabel('Surname')
-        self.clientStreetLabel = QLabel('Street')
-        self.clientTownLabel = QLabel('Town/City')
-        self.clientCountyLabel = QLabel('County')
-        self.clientPostCodeLabel = QLabel('Post Code')
-        self.clientPhoneNumberLabel = QLabel('Phone Number')
-        self.clientEmailLabel = QLabel('Email')
+        self.jobStreetLabel = QLabel('Street')
+        self.jobTownLabel = QLabel('Town/City')
+        self.jobCountyLabel = QLabel('County')
+        self.jobPostCodeLabel = QLabel('Post Code')
+        self.jobClient = QLabel("Job Client")
+        self.jobPlasterer = QLabel("Job Plasterer")
 
-        self.clientTitle = QComboBox()
-        self.titles = ["Mr","Mrs","Ms","Sir"]
-        self.clientTitle.addItems(self.titles)
+        self.jobStreet= QLineEdit()
+        self.jobTown = QLineEdit()
+        self.jobCounty = QComboBox()
+        self.jobCounty.addItems(self.counties)
+        self.jobPostCode = QLineEdit()
+        
+        self.jobClientEdit = QTableView()
 
-        self.clientFirstName = QLineEdit()
-        self.clientSurname = QLineEdit()
-        self.clientStreet = QLineEdit()
-        self.clientTown = QLineEdit()
-        self.clientCounty = QComboBox()
-        self.clientCounty.addItems(self.counties)
-        self.clientPostCode = QLineEdit()
-        self.clientPhoneNumber = QLineEdit()
-        self.clientEmail = QLineEdit()
+        self.clientQueryModel = QSqlQueryModel()
 
+
+        
+        self.jobClientEdit.setToolTip("This is the unique ID of the client the job is for.")
+        self.jobPlastererEdit = QLineEdit()
+
+        
         self.cancelFormButton = QPushButton("Cancel")
-        self.addClientFormButton = QPushButton("Add Client")
+        self.addJobFormButton = QPushButton("Add Job")
 
         self.errorTextLabel = QLabel("Errors:")
         self.errorTextContentLabel = QLabel("None")
         self.errorTextContentLabel.setStyleSheet("color: red;")
 
 
-        self.addClientTitleText = QLabel("Add a Client")
+        self.addJobTitleText = QLabel("Add a Job")
         self.shadow = QGraphicsDropShadowEffect()
         self.shadow.setBlurRadius(5)
-        self.addClientTitleText.setGraphicsEffect(self.shadow)
-        self.addClientTitleText.setStyleSheet("font-size:20px;")
+        self.addJobTitleText.setGraphicsEffect(self.shadow)
+        self.addJobTitleText.setStyleSheet("font-size:20px;")
 
 
 
@@ -274,44 +273,35 @@ class AddJobWidget(QWidget):
         grid.addWidget(self.errorTextLabel,0,0)
         grid.addWidget(self.errorTextContentLabel,0,1)
         
-        grid.addWidget(self.clientTitleLabel, 1, 0)
-        grid.addWidget(self.clientTitle, 1, 1)
+        grid.addWidget(self.jobStreetLabel, 1, 0)
+        grid.addWidget(self.jobStreet, 1, 1)
 
-        grid.addWidget(self.clientFirstNameLabel, 2, 0)
-        grid.addWidget(self.clientFirstName, 2, 1)
+        grid.addWidget(self.jobTownLabel, 2, 0)
+        grid.addWidget(self.jobTown, 2, 1)
 
-        grid.addWidget(self.clientSurnameLabel, 3, 0)
-        grid.addWidget(self.clientSurname, 3, 1)
+        grid.addWidget(self.jobCountyLabel, 3, 0)
+        grid.addWidget(self.jobCounty, 3, 1)
 
-        grid.addWidget(self.clientStreetLabel, 4, 0)
-        grid.addWidget(self.clientStreet, 4, 1)
+        grid.addWidget(self.jobPostCodeLabel, 4, 0)
+        grid.addWidget(self.jobPostCode, 4, 1)
 
-        grid.addWidget(self.clientTownLabel, 5, 0)
-        grid.addWidget(self.clientTown, 5, 1)
+        grid.addWidget(self.jobClient, 5, 0)
+        grid.addWidget(self.jobClientEdit, 5, 1)
 
-        grid.addWidget(self.clientCountyLabel, 6, 0)
-        grid.addWidget(self.clientCounty, 6, 1)
-
-        grid.addWidget(self.clientPostCodeLabel, 7, 0)
-        grid.addWidget(self.clientPostCode, 7, 1)
-
-        grid.addWidget(self.clientPhoneNumberLabel, 8, 0)
-        grid.addWidget(self.clientPhoneNumber, 8, 1)
-
-        grid.addWidget(self.clientEmailLabel, 9, 0)
-        grid.addWidget(self.clientEmail, 9, 1)
+        grid.addWidget(self.jobPlasterer, 6, 0)
+        grid.addWidget(self.jobPlastererEdit, 6, 1)
 
         self.gridWidget = QWidget()
         self.gridWidget.setLayout(grid)
 
         self.verticalLayout = QVBoxLayout()
-        self.verticalLayout.addWidget(self.addClientTitleText)
+        self.verticalLayout.addWidget(self.addJobTitleText)
         self.verticalLayout.addStretch(1)
         self.verticalLayout.addWidget(self.gridWidget)
 
         self.hBoxL = QHBoxLayout()
         self.hBoxL.addWidget(self.cancelFormButton)
-        self.hBoxL.addWidget(self.addClientFormButton)
+        self.hBoxL.addWidget(self.addJobFormButton)
         self.hButtonL = QWidget()
         self.hButtonL.setLayout(self.hBoxL)
         
@@ -319,14 +309,10 @@ class AddJobWidget(QWidget):
         self.verticalLayout.addStretch(1)
 
         #connections
-        self.clientFirstName.textChanged.connect(self.validateFirstName)
-        self.clientSurname.textChanged.connect(self.validateSurname)
-        self.clientStreet.textChanged.connect(self.validateStreet)
-        self.clientTown.textChanged.connect(self.validateTown)
-        self.clientPostCode.textChanged.connect(self.validatePostCode)
-        self.clientEmail.textChanged.connect(self.validateEmail)
-        self.clientPhoneNumber.textChanged.connect(self.validatePhoneNumber)
-        self.addClientFormButton.clicked.connect(self.validateAddClientForm)
+        self.jobStreet.textChanged.connect(self.validateStreet)
+        self.jobTown.textChanged.connect(self.validateTown)
+        self.jobPostCode.textChanged.connect(self.validatePostCode)
+        self.addJobFormButton.clicked.connect(self.validateAddJobForm)
 
 
 

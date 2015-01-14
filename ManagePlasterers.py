@@ -213,14 +213,17 @@ class ManagePlasterersWidget(QWidget):
         return self.userInfoEdit
 
     def searchDatabase(self):
+        
 
         queryText = self.searchField.text()
 
-        query = self.connection.getSearchQuery2(queryText)
+        if queryText != "":
 
-        #print(queryText)
+            query = self.connection.getSearchQuery2(queryText)
 
-        self.showResults(query)
+            #print(queryText)
+
+            self.showResults(query)
         
     def showAllPlasterersInTable(self):
         
@@ -293,7 +296,8 @@ class ManagePlasterersWidget(QWidget):
         if numberOfRowsSelected == 1:
             if self.currentRow != rows[0]:
                 self.currentRow = rows[0]
-                cliID = int(self.currentRow) + 1
+                #cliID = int(self.currentRow) + 1
+                cliID = self.model.record(self.currentRow).field(0).value()
                 data = self.connection.getPlastererData(cliID)
 
 

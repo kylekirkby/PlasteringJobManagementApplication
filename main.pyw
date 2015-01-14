@@ -12,6 +12,7 @@ from PlasterersMenu import *
 from JobsMenu import *
 from AddClient import *
 from AddPlasterer import *
+from AddJob import *
 from ManageClients import *
 from ManagePlasterers import *
 from ManageJobs import *
@@ -61,6 +62,7 @@ program """
         self.manageClientsLayout()
         self.managePlasterersLayout()
         self.manageJobsLayout()
+        self.addJobLayout()
 
         #Disable database related actions
         self.dbNotOpen()
@@ -75,6 +77,7 @@ program """
         self.addPlastererL.addConnection(self.connection)
         self.manageClientsL.addConnection(self.connection)
         self.managePlasterersL.addConnection(self.connection)
+        self.addJobL.addConnection(self.connection)
 
        
     def dbNotOpen(self):
@@ -88,10 +91,18 @@ program """
         self.addJob.setEnabled(False)
         self.viewJobs.setEnabled(False)
 
+        self.addAppointment.setEnabled(False)
+        self.manageAppointments.setEnabled(False)
+
+        self.addInvoice.setEnabled(False)
+        self.manageInvoices.setEnabled(False)
+
         self.newDatabase.setEnabled(True)
         self.openDatabase.setEnabled(True)
         self.closeDatabase.setEnabled(False)
 
+        self.addMaterial.setEnabled(False)
+        self.manageMaterials.setEnabled(False)
 
         self.stackedLayout.setCurrentIndex(0)
     
@@ -107,6 +118,16 @@ program """
 
         self.addJob.setEnabled(True)
         self.viewJobs.setEnabled(True)
+
+        self.addMaterial.setEnabled(True)
+        self.manageMaterials.setEnabled(True)
+
+        self.addAppointment.setEnabled(True)
+        self.manageAppointments.setEnabled(True)
+
+        self.addInvoice.setEnabled(True)
+        self.manageInvoices.setEnabled(True)
+        
 
         self.newDatabase.setEnabled(False)
         self.openDatabase.setEnabled(False)
@@ -133,6 +154,16 @@ program """
         self.help = QAction("Help",self)
         self.about = QAction("About", self)
 
+        self.addMaterial = QAction("New Material", self)
+        self.manageMaterials = QAction("Manage Materials", self)
+
+        self.addAppointment = QAction("Add Appointment", self)
+        self.manageAppointments = QAction("Manage Appointments", self)
+
+        self.addInvoice = QAction("New Invoice", self)
+        self.manageInvoices = QAction("Manage Invoices", self)
+        
+
         self.openDatabase = QAction("Open Database", self)
         self.newDatabase = QAction("New Database", self)
         self.closeDatabase = QAction("Close Database", self)
@@ -151,18 +182,35 @@ program """
         self.clientsMenu.addAction(self.addClient)
         self.clientsMenu.addAction(self.manageClients)
 
-        #Jobs Menu
-        self.jobsMenu = self.menu.addMenu("Jobs")
-        self.jobsMenu.addAction(self.addJob)
-        self.jobsMenu.addAction(self.viewJobs)
-
-        
         #Plasterers Menu
         self.plasterersMenu = self.menu.addMenu("Plasterers")
         self.plasterersMenu.addAction(self.addPlasterer)
         self.plasterersMenu.addAction(self.managePlasterers)
 
-        
+        #Materials Menu
+        self.materialsMenu = self.menu.addMenu("Materials")
+        self.materialsMenu.addAction(self.addMaterial)
+        self.materialsMenu.addAction(self.manageMaterials)
+
+        #Jobs Menu
+        self.jobsMenu = self.menu.addMenu("Jobs")
+        self.jobsMenu.addAction(self.addJob)
+        self.jobsMenu.addAction(self.viewJobs)
+
+        #Appointments Menu
+        self.appointmentsMenu = self.menu.addMenu("Appointments")
+        self.appointmentsMenu.addAction(self.addAppointment)
+        self.appointmentsMenu.addAction(self.manageAppointments)
+
+        #Invoices Menu
+        self.invoicesMenu = self.menu.addMenu("Invoices")
+        self.invoicesMenu.addAction(self.addInvoice)
+        self.invoicesMenu.addAction(self.manageInvoices)
+
+
+
+
+
         #Help Menu
         self.helpMenu = self.menu.addMenu("Help")
         self.helpMenu.addAction(self.help)
@@ -180,9 +228,26 @@ program """
         self.toolBar.addAction(self.managePlasterers)
         self.toolBar.addSeparator()
 
+        self.toolBar.addAction(self.addMaterial)
+        self.toolBar.addAction(self.manageMaterials)
+        self.toolBar.addSeparator()
+        
+
         self.toolBar.addAction(self.addJob)
         self.toolBar.addAction(self.viewJobs)
         self.toolBar.addSeparator()
+
+        self.toolBar.addAction(self.addAppointment)
+        self.toolBar.addAction(self.manageAppointments)
+        self.toolBar.addSeparator()
+
+        self.toolBar.addAction(self.addInvoice)
+        self.toolBar.addAction(self.manageInvoices)
+        self.toolBar.addSeparator()
+
+        
+
+
 
         self.toolBar.setMovable(False)
         
@@ -203,6 +268,7 @@ program """
         self.newDbPushButton.clicked.connect(self.createNewDatabase)
         self.openDbPushButton.clicked.connect(self.openDatabaseConn)
         self.viewJobs.triggered.connect(self.switchToManageJobs)
+        self.addJob.triggered.connect(self.switchToAddJob)
 
 
         self.addClient.triggered.connect(self.switchToAddClient)
@@ -398,7 +464,13 @@ program """
 
     def switchToManageJobs(self):
         self.stackedLayout.setCurrentIndex(9)
-        
+
+
+
+    def switchToAddJob(self):
+        self.stackedLayout.setCurrentIndex(10)
+
+    
     
     def clientsLayout(self):
         self.clientsLayoutWidget = ClientsMenuWidget()
@@ -434,6 +506,10 @@ program """
     def addPlastererLayout(self):
         self.addPlastererL = AddPlastererWidget(self)
         self.stackedLayout.addWidget(self.addPlastererL)
+
+    def addJobLayout(self):
+        self.addJobL = AddJobWidget(self)
+        self.stackedLayout.addWidget(self.addJobL)
         
     def showAboutMessageBox(self):
 
