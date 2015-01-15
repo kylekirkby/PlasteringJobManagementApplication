@@ -13,46 +13,35 @@ class AddJobWidget(QWidget):
         super().__init__()
         
         self.setProperty("addJobClass","True")
-
         self.connection = None
+        self.currentRow = None
+        self.currentRow2 = None
+
+        self.model = QSqlQueryModel()
+        
+        self.plastererModel = QSqlQueryModel()
 
         self.parent = parent
         
         self.mainLayout = self.layout()
-        
         self.setLayout(self.mainLayout)
-
         self.setStyleSheet("QWidget[addJobClass=True]{padding:100px;}")
 
     def addConnection(self, connection):
         
         self.connection = connection
 
+        allPlasterersQuery = self.connection.getAllPlasterers()
+        self.showPlastererResults(allPlasterersQuery)
+
+        allClientsQuery = self.connection.getAllClients()        
+        self.showClientResults(allClientsQuery)
+    
+
+
         return True
 
-    def validateFirstName(self):
 
-        text = self.jobFirstName.text()
-        length = len(text)
-
-        if length > 2:
-            self.jobFirstName.setStyleSheet("background-color:#c4df9b;")
-            return True
-        else:
-            self.jobFirstName.setStyleSheet("background-color:#f6989d;")
-            return False
-
-    def validateSurname(self):
-
-        text = self.jobSurname.text()
-        length = len(text)
-
-        if length > 2:
-            self.jobSurname.setStyleSheet("background-color:#c4df9b;")
-            return True
-        else:
-            self.jobSurname.setStyleSheet("background-color:#f6989d;")
-            return False
 
     def validateStreet(self):
 
@@ -96,50 +85,36 @@ class AddJobWidget(QWidget):
             return False
 
 
-    def validatePhoneNumber(self):
-        text = self.jobPhoneNumber.text()
-        length = len(text)
+    def validateDescription(self):
+        text = self.jobDescription.toPlainText()
 
-        if length >= 11:
-            self.jobPhoneNumber.setStyleSheet("background-color:#c4df9b;")
+        textLength = len(text)
+
+        if textLength >= 3:
+            self.jobDescription.setStyleSheet("background-color:#c4df9b;")
             return True
         else:
-            self.jobPhoneNumber.setStyleSheet("background-color:#f6989d;")
+            self.jobDescription.setStyleSheet("background-color:#f6989d;")
             return False
-
-    def validateEmail(self):
-        text = self.jobEmail.text()
-
-        emailRegEx = re.compile("^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$")
-
-        match = emailRegEx.match(text)
-
-        if match:
-            self.jobEmail.setStyleSheet("background-color:#c4df9b;")
-            return True
-        else:
-            self.jobEmail.setStyleSheet("background-color:#f6989d;")
-            return False
-
-    def clearForm(self):
         
-        self.jobTitle.setCurrentIndex(0)
-        self.jobFirstName.clear()
-        self.jobSurname.clear()
+    def clearForm(self):
+
+        self.jobPlastererTable.clearSelection()
+        self.jobClientTable.clearSelection()
+
+        self.clientIDContent.clear()
+        self.plastererIDContent.clear()
         self.jobStreet.clear()
         self.jobTown.clear()
         self.jobCounty.setCurrentIndex(0)
         self.jobPostCode.clear()
-        self.jobPhoneNumber.clear()
-        self.jobEmail.clear()
-
-        self.jobFirstName.setStyleSheet("background-color:#FFF;")
-        self.jobSurname.setStyleSheet("background-color:#FFF;")
+        self.jobDescription.clear()
+        
         self.jobStreet.setStyleSheet("background-color:#FFF;")
         self.jobTown.setStyleSheet("background-color:#FFF;")
         self.jobPostCode.setStyleSheet("background-color:#FFF;")
-        self.jobPhoneNumber.setStyleSheet("background-color:#FFF;")
-        self.jobEmail.setStyleSheet("background-color:#FFF;")
+        self.jobDescription.setStyleSheet("background-color:#FFF;")
+        
 
         self.errorTextContentLabel.setText("None")
         
@@ -147,17 +122,17 @@ class AddJobWidget(QWidget):
     def addJobToDatabase(self):
 
         county = str(self.jobCounty.currentText())
-        title = str(self.jobTitle.currentText())
 
-        values = { "Title": title,
-                   "FirstName": self.jobFirstName.text(),
-                  "Surname": self.jobSurname.text(),
-                  "Street": self.jobStreet.text(),
+        clientID = str(self.clientIDContent.text())
+        plastererID = str(self.plastererIDContent.text())
+
+        values = {"Street": self.jobStreet.text(),
                   "Town": self.jobTown.text(),
                   "County": county,
                   "PostCode": self.jobPostCode.text(),
-                  "Email": self.jobEmail.text(),
-                   "PhoneNumber": self.jobPhoneNumber.text()}
+                  "ClientID": clientID,
+                  "PlastererID": plastererID,
+                  "Description": self.jobDescription.toPlainText()}
 
         jobAdded = self.connection.addJob(values)
 
@@ -177,30 +152,33 @@ class AddJobWidget(QWidget):
     
     def validateAddJobForm(self):
 
-        self.checkFirstName = self.validateFirstName()
-        self.checkSurname = self.validateSurname()
         self.checkStreet = self.validateStreet()
         self.checkTown = self.validateTown()
         self.checkPostCode = self.validatePostCode()
-        self.checkPhoneNumber = self.validatePhoneNumber()
-        self.checkEmail = self.validateEmail()
+        self.checkDescription = self.validateDescription()
+
+        self.plastererIDText = self.plastererIDContent.text()
+        self.clientIDText = self.clientIDContent.text()
+
+        
+
 
         self.errorMsg = ""
 
-        if self.checkFirstName == False:
-            self.errorMsg += "Invalid First Name, "
-        if self.checkSurname == False:
-            self.errorMsg += "Invalid Surname, "
         if self.checkStreet == False:
             self.errorMsg += "Invalid Street, "
         if self.checkTown == False:
             self.errorMsg += "Invalid Town, "
         if self.checkPostCode == False:
             self.errorMsg += "Invalid Post Code Format, "
-        if self.checkPhoneNumber == False:
-            self.errorMsg += "Invalid Phone Number Format, "
-        if self.checkEmail == False:
-            self.errorMsg += "Invalid Email Format, "
+        if self.plastererIDText == "":
+            self.errorMsg += "Must choose a plasterer for the job!, "
+        if self.clientIDText == "":
+            self.errorMsg += "Must choose a client that the job is for!, "
+
+        if self.checkDescription == False:
+            self.errorMsg += "Description must be more than 3 characters long!, "
+
         
 
         self.errorTextContentLabel.setText(self.errorMsg)
@@ -211,7 +189,158 @@ class AddJobWidget(QWidget):
             return True
         else:
             return False
+
+    def showClientResults(self, query):
+        
+        self.model.setQuery(query)
+        self.jobClientTable.setModel(self.model)
+        self.jobClientTable.setSortingEnabled(True)
+        self.jobClientTable.show()
+
+        #widget connections
+        self.jobClientTable.selectionModel().selectionChanged.connect(self.getSelectedClient)
+
+    def showPlastererResults(self,query):
+
+        self.plastererModel.setQuery(query)
+        self.jobPlastererTable.setModel(self.plastererModel)
+        self.jobPlastererTable.setSortingEnabled(True)
+        self.jobPlastererTable.show()
+
+        #widget connections
+        self.jobPlastererTable.selectionModel().selectionChanged.connect(self.getSelectedPlasterer)
+
+    def getSelectedClient(self):
+
+        selectedIndexes = self.jobClientTable.selectionModel().selection().indexes()
+
+        rows = []
+
+        for each in selectedIndexes:
+            rowNum = each.row()
+            if rowNum not in rows:
+                rows.append(rowNum)
+
+        numberOfRowsSelected = len(rows)
     
+        if numberOfRowsSelected == 1:
+            if self.currentRow != rows[0]:
+                self.currentRow = rows[0]
+                #cliID = int(self.currentRow) + 1
+                cliID = self.model.record(self.currentRow).field(0).value()
+
+                self.updateSelectedClient(cliID)
+
+
+    def getSelectedPlasterer(self):
+
+        selectedIndexes = self.jobPlastererTable.selectionModel().selection().indexes()
+
+        rows = []
+
+        for each in selectedIndexes:
+            rowNum = each.row()
+            if rowNum not in rows:
+                rows.append(rowNum)
+
+        numberOfRowsSelected = len(rows)
+    
+        if numberOfRowsSelected == 1:
+            if self.currentRow2 != rows[0]:
+                self.currentRow2 = rows[0]
+                #cliID = int(self.currentRow) + 1
+                plastererID = self.plastererModel.record(self.currentRow2).field(0).value()
+
+                self.updateSelectedPlasterer(plastererID)
+
+    def clientTableWidget(self):
+
+        self.vBox = QVBoxLayout()
+
+        self.jobClientTable = QTableView()
+        self.jobClientTable.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.jobClientTable.setModel(self.plastererModel)    
+        self.jobClientTable.setToolTip("This is the unique ID of the client the job is for.")
+
+        self.searchClientsField = QLineEdit()
+        self.searchClientsField.setPlaceholderText("Search for a client...")
+
+        ##Show the selected client id
+
+        self.clientID = QLabel("Client ID:")
+        self.clientIDContent = QLabel()
+
+        self.hBox = QHBoxLayout()
+        self.hBox.addWidget(self.clientID)
+        self.hBox.addWidget(self.clientIDContent)
+
+        self.selectedClientWidget = QWidget()
+        self.selectedClientWidget.setLayout(self.hBox)
+
+
+        self.vBox.addWidget(self.jobClientTable)
+        self.vBox.addWidget(self.searchClientsField)
+        self.vBox.addWidget(self.selectedClientWidget)
+
+
+        ##main entire widget
+        self.mainWidget = QWidget()
+        self.mainWidget.setLayout(self.vBox)
+
+
+
+        return self.mainWidget
+
+    def plastererTableWidget(self):
+
+        self.vBox = QVBoxLayout()
+
+        self.jobPlastererTable = QTableView()
+        self.jobPlastererTable.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.jobPlastererTable.setModel(self.model)    
+        self.jobPlastererTable.setToolTip("This is the unique ID of the plasterer that will complete the job.")
+
+        self.searchPlasterersField = QLineEdit()
+        self.searchPlasterersField.setPlaceholderText("Search for a plasterer...")
+
+        ##Show the selected client id
+
+        self.plastererID = QLabel("Plasterer ID:")
+        self.plastererIDContent = QLabel()
+
+        self.hBox = QHBoxLayout()
+        self.hBox.addWidget(self.plastererID)
+        self.hBox.addWidget(self.plastererIDContent)
+
+        self.selectedPlastererWidget = QWidget()
+        self.selectedPlastererWidget.setLayout(self.hBox)
+
+
+        self.vBox.addWidget(self.jobPlastererTable)
+        self.vBox.addWidget(self.searchPlasterersField)
+        self.vBox.addWidget(self.selectedPlastererWidget)
+
+
+        ##main entire widget
+        self.mainWidget2 = QWidget()
+        self.mainWidget2.setLayout(self.vBox)
+
+        return self.mainWidget2
+
+    
+        
+
+    def updateSelectedClient(self, clientID):
+
+        self.clientIDContent.setText(str(clientID))
+
+    def updateSelectedPlasterer(self, plastererID):
+
+        self.plastererIDContent.setText(str(plastererID))
+
+    def searchForClient(self, queryText):
+        pass
+        
 
     def layout(self):
 
@@ -234,24 +363,28 @@ class AddJobWidget(QWidget):
         self.jobPostCodeLabel = QLabel('Post Code')
         self.jobClient = QLabel("Job Client")
         self.jobPlasterer = QLabel("Job Plasterer")
+        self.jobDescriptionLabel = QLabel("Job Description")
 
         self.jobStreet= QLineEdit()
         self.jobTown = QLineEdit()
         self.jobCounty = QComboBox()
         self.jobCounty.addItems(self.counties)
         self.jobPostCode = QLineEdit()
-        
-        self.jobClientEdit = QTableView()
-
-        self.clientQueryModel = QSqlQueryModel()
+        self.jobDescription = QPlainTextEdit()
 
 
         
-        self.jobClientEdit.setToolTip("This is the unique ID of the client the job is for.")
-        self.jobPlastererEdit = QLineEdit()
 
+        self.getPlastererWidget = self.plastererTableWidget()
+
+
+        self.getClientWidget = self.clientTableWidget()
         
-        self.cancelFormButton = QPushButton("Cancel")
+        
+        #self.getPlastererWidget = QLabel("Test")
+        
+        self.cancelFormButton = QPushButton("Back")
+        self.clearFormButton = QPushButton("Clear Form")
         self.addJobFormButton = QPushButton("Add Job")
 
         self.errorTextLabel = QLabel("Errors:")
@@ -286,10 +419,13 @@ class AddJobWidget(QWidget):
         grid.addWidget(self.jobPostCode, 4, 1)
 
         grid.addWidget(self.jobClient, 5, 0)
-        grid.addWidget(self.jobClientEdit, 5, 1)
+        grid.addWidget(self.getClientWidget, 5, 1)
 
         grid.addWidget(self.jobPlasterer, 6, 0)
-        grid.addWidget(self.jobPlastererEdit, 6, 1)
+        grid.addWidget(self.getPlastererWidget, 6, 1)
+
+        grid.addWidget(self.jobDescriptionLabel, 7 ,0)
+        grid.addWidget(self.jobDescription, 7, 1)
 
         self.gridWidget = QWidget()
         self.gridWidget.setLayout(grid)
@@ -301,18 +437,21 @@ class AddJobWidget(QWidget):
 
         self.hBoxL = QHBoxLayout()
         self.hBoxL.addWidget(self.cancelFormButton)
-        self.hBoxL.addWidget(self.addJobFormButton)
+        self.hBoxL.addWidget(self.clearFormButton)
         self.hButtonL = QWidget()
         self.hButtonL.setLayout(self.hBoxL)
         
         self.verticalLayout.addWidget(self.hButtonL)
+        self.verticalLayout.addWidget(self.addJobFormButton)
         self.verticalLayout.addStretch(1)
 
         #connections
         self.jobStreet.textChanged.connect(self.validateStreet)
         self.jobTown.textChanged.connect(self.validateTown)
         self.jobPostCode.textChanged.connect(self.validatePostCode)
+        self.jobDescription.textChanged.connect(self.validateDescription)
         self.addJobFormButton.clicked.connect(self.validateAddJobForm)
+        self.clearFormButton.clicked.connect(self.clearForm)
 
 
 

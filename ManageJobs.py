@@ -27,7 +27,7 @@ class ManageJobsWidget(QWidget):
 
         self.model = QSqlQueryModel()
         
-        self.setStyleSheet("QWidget[addplastererClass=True]{padding:100px;}")
+        self.setStyleSheet("QWidget[addjobClass=True]{padding:100px;}")
 
         self.mainLayout = self.layout()
         
@@ -40,24 +40,24 @@ class ManageJobsWidget(QWidget):
 
     def layout(self):
 
-        self.searchPlasterersGroup = QGroupBox("Search Jobs")
+        self.searchJobsGroup = QGroupBox("Search Jobs")
 
-        self.showAllPlasterersPushButton = QPushButton("Show All Jobs")
+        self.showAllJobsPushButton = QPushButton("Show All Jobs")
 
-        self.showAllPlasterersPushButton.setMaximumWidth(100)
+        self.showAllJobsPushButton.setMaximumWidth(100)
 
-        self.searchPlasterersLayout = QHBoxLayout()
+        self.searchJobsLayout = QHBoxLayout()
 
         self.searchField = QLineEdit()
         self.searchPushButton = QPushButton("Search")
 
-        self.searchPlasterersLayout.addWidget(self.searchField)
-        self.searchPlasterersLayout.addWidget(self.searchPushButton)
+        self.searchJobsLayout.addWidget(self.searchField)
+        self.searchJobsLayout.addWidget(self.searchPushButton)
 
-        self.searchPlasterersGroup.setLayout(self.searchPlasterersLayout)
+        self.searchJobsGroup.setLayout(self.searchJobsLayout)
 
         self.searchL = QVBoxLayout()
-        self.searchL.addWidget(self.searchPlasterersGroup)
+        self.searchL.addWidget(self.searchJobsGroup)
 
         self.searchWidget = QWidget()
         self.searchWidget.setLayout(self.searchL)
@@ -84,7 +84,7 @@ class ManageJobsWidget(QWidget):
 
         self.newL = QVBoxLayout()
         self.newL.addWidget(self.results_table)
-        self.newL.addWidget(self.showAllPlasterersPushButton)
+        self.newL.addWidget(self.showAllJobsPushButton)
 
         self.tableGroup.setLayout(self.newL)
 
@@ -94,16 +94,16 @@ class ManageJobsWidget(QWidget):
         self.groupWidget = QWidget()
         self.groupWidget.setLayout(self.groupL)
 
-        self.editPlastererWidget = self.editPlasterer()
+        self.editJobWidget = self.editJob()
 
         self.vBoxLayout = QVBoxLayout()
         self.vBoxLayout.addWidget(self.searchWidget)
         self.vBoxLayout.addWidget(self.groupWidget)
-        self.vBoxLayout.addWidget(self.editPlastererWidget)
+        self.vBoxLayout.addWidget(self.editJobWidget)
 
         return self.vBoxLayout
 
-    def editPlasterer(self):
+    def editJob(self):
 
         self.jobDetailsGroupBox = QGroupBox("Job")
         self.jobDetailsGroupBox.setEnabled(False)
@@ -288,9 +288,9 @@ class ManageJobsWidget(QWidget):
 
         self.showResults(query)
         
-    def showAllPlasterersInTable(self):
+    def showAllJobsInTable(self):
         
-        query = self.connection.getAllPlasterers()
+        query = self.connection.getAllJobs()
 
         self.showResults(query)
 
@@ -303,15 +303,15 @@ class ManageJobsWidget(QWidget):
         
         return True
 
-    def editingPlasterer(self):
+    def editingJob(self):
         
-        self.searchPlasterersGroup.setEnabled(False)
+        self.searchJobsGroup.setEnabled(False)
         self.tableGroup.setEnabled(False)
 
-        self.editPlastererGroupBox.setEnabled(True)
+        self.editJobGroupBox.setEnabled(True)
 
 
-    def searchingPlasterers(self):
+    def searchingJobs(self):
         #clear edit form
         self.firstNameEdit.clear()
         self.surnameEdit.clear()
@@ -335,10 +335,10 @@ class ManageJobsWidget(QWidget):
 
         self.results_table.selectionModel().clearSelection()
         
-        self.searchPlasterersGroup.setEnabled(True)
+        self.searchJobsGroup.setEnabled(True)
         self.tableGroup.setEnabled(True)
         
-        self.editPlastererGroupBox.setEnabled(False)
+        self.editJobGroupBox.setEnabled(False)
 
         
     def changeFormFields(self):
@@ -360,20 +360,20 @@ class ManageJobsWidget(QWidget):
             if self.currentRow != rows[0]:
                 self.currentRow = rows[0]
                 cliID = int(self.currentRow) + 1
-                data = self.connection.getPlastererData(cliID)
+                data = self.connection.getJobData(cliID)
 
 
-                self.searchPlasterersGroup.setEnabled(False)
+                self.searchJobsGroup.setEnabled(False)
                 self.tableGroup.setEnabled(False)
-                self.editPlastererGroupBox.setEnabled(True)
+                self.editJobGroupBox.setEnabled(True)
 
-                self.editPlastererPopulate(data)
+                self.editJobPopulate(data)
 
 
 
 
                             
-    def editPlastererPopulate(self, data):
+    def editJobPopulate(self, data):
 
         currentId = data[0]
         title = data[1]
@@ -418,7 +418,7 @@ class ManageJobsWidget(QWidget):
         
     def connections(self):
         self.searchField.textChanged.connect(self.searchDatabase)
-        self.showAllPlasterersPushButton.clicked.connect(self.showAllPlasterersInTable)
+        self.showAllJobsPushButton.clicked.connect(self.showAllJobsInTable)
         #self.results_table.selectionModel().selectionChanged.connect(self.changeFormFields)
 
 
@@ -432,7 +432,7 @@ class ManageJobsWidget(QWidget):
         self.phoneNumberEdit.textChanged.connect(self.validatePhoneNumber)
         self.dailyRateEdit.textChanged.connect(self.validateDailyRate)
         self.savePushButton.clicked.connect(self.validateForm)
-        self.cancelPushButton.clicked.connect(self.searchingPlasterers)
+        self.cancelPushButton.clicked.connect(self.searchingJobs)
 
 
     def addUpdatedDataToDb(self):
@@ -451,35 +451,31 @@ class ManageJobsWidget(QWidget):
                    "PhoneNumber": self.phoneNumberEdit.text(),
                   "DailyRate" : self.dailyRateEdit.text()}
 
-        plastererAdded = self.connection.updatePlasterer(values)
+        jobAdded = self.connection.updateJob(values)
 
-        if plastererAdded:
+        if jobAdded:
 
-            self.searchingPlasterers()
+            self.searchingJobs()
 
             #clear the table
             query = self.connection.initialTableP()
             self.showResults(query)
              
-            infoText = """ The plasterers information has been updated!"""
-            QMessageBox.information(self, "Plasterer Info Updated!", infoText)
+            infoText = """ The jobs information has been updated!"""
+            QMessageBox.information(self, "Job Info Updated!", infoText)
             
         else:
-            infoText = """ The plasterer was not updated successfully! """
+            infoText = """ The job was not updated successfully! """
 
-            QMessageBox.critical(self, "Plasterer Not Updated!", infoText)
+            QMessageBox.critical(self, "Job Not Updated!", infoText)
         
 
     def validateForm(self):
 
-        self.checkFirstName = self.validateFirstName()
-        self.checkSurname = self.validateSurname()
         self.checkStreet = self.validateStreet()
         self.checkTown = self.validateTown()
         self.checkPostCode = self.validatePostCode()
-        self.checkPhoneNumber = self.validatePhoneNumber()
-        self.checkEmail = self.validateEmail()
-        self.checkDailyRate = self.validateDailyRate()
+
 
         self.errorMsg = ""
 
@@ -512,29 +508,6 @@ class ManageJobsWidget(QWidget):
 
     
 
-    def validateFirstName(self):
-
-        text = self.firstNameEdit.text()
-        length = len(text)
-
-        if length > 2:
-            self.firstNameEdit.setStyleSheet("background-color:#c4df9b;")
-            return True
-        else:
-            self.firstNameEdit.setStyleSheet("background-color:#f6989d;")
-            return False
-
-    def validateSurname(self):
-
-        text = self.surnameEdit.text()
-        length = len(text)
-
-        if length > 2:
-            self.surnameEdit.setStyleSheet("background-color:#c4df9b;")
-            return True
-        else:
-            self.surnameEdit.setStyleSheet("background-color:#f6989d;")
-            return False
 
     def validateStreet(self):
 
@@ -577,46 +550,6 @@ class ManageJobsWidget(QWidget):
             self.postCodeEdit.setStyleSheet("background-color:#f6989d;")
             return False
 
-
-    def validatePhoneNumber(self):
-        text = self.phoneNumberEdit.text()
-        length = len(text)
-
-        if length == 11:
-            self.phoneNumberEdit.setStyleSheet("background-color:#c4df9b;")
-            return True
-        else:
-            self.phoneNumberEdit.setStyleSheet("background-color:#f6989d;")
-            return False
-
-    def validateEmail(self):
-        text = self.emailEdit.text()
-
-        emailRegEx = re.compile("^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$")
-
-        match = emailRegEx.match(text)
-
-        if match:
-            self.emailEdit.setStyleSheet("background-color:#c4df9b;")
-            return True
-        else:
-            self.emailEdit.setStyleSheet("background-color:#f6989d;")
-            return False
-
-    def validateDailyRate(self):
-        
-        text = self.dailyRateEdit.text()
-
-        dailyRateRegEx = re.compile("[0-9]+\.[0-9]+")
-
-        match = dailyRateRegEx.match(text.upper())
-
-        if match:
-            self.dailyRateEdit.setStyleSheet("background-color:#c4df9b;")
-            return True
-        else:
-            self.dailyRateEdit.setStyleSheet("background-color:#f6989d;")
-            return False
 
 
 

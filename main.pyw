@@ -10,9 +10,14 @@ from SQLConnection import *
 from ClientsMenu import *
 from PlasterersMenu import *
 from JobsMenu import *
+from AppointmentsMenu import *
+from InvoicesMenu import *
+from MaterialsMenu import *
+
 from AddClient import *
 from AddPlasterer import *
 from AddJob import *
+
 from ManageClients import *
 from ManagePlasterers import *
 from ManageJobs import *
@@ -63,6 +68,9 @@ program """
         self.managePlasterersLayout()
         self.manageJobsLayout()
         self.addJobLayout()
+        self.appointmentsLayout()
+        self.invoicesLayout()
+        self.materialsLayout()
 
         #Disable database related actions
         self.dbNotOpen()
@@ -297,8 +305,19 @@ program """
         
         self.addClientL.cancelFormButton.clicked.connect(self.switchToClientsMenu)
         self.addPlastererL.cancelFormButton.clicked.connect(self.switchToPlasterersMenu)
+        self.addJobL.cancelFormButton.clicked.connect(self.switchToJobsMenu)
 
         self.jobsLayoutWidget.manageJobsPushButton.clicked.connect(self.switchToManageJobs)
+
+        self.jobsLayoutWidget.addJobPushButton.clicked.connect(self.switchToAddJob)
+
+        self.materialsPushButton.clicked.connect(self.switchToMaterialsMenu)
+        self.invoicesPushButton.clicked.connect(self.switchToInvoicesMenu)
+        self.appointmentsPushButton.clicked.connect(self.switchToAppointmentsMenu)
+
+        self.appointmentsLayoutWidget.backButton.clicked.connect(self.switchToMainMenu)
+        self.invoicesLayoutWidget.backButton.clicked.connect(self.switchToMainMenu)
+        self.materialsLayoutWidget.backButton.clicked.connect(self.switchToMainMenu)
 
 
         
@@ -375,21 +394,48 @@ program """
         self.jobsPushButton.setProperty("buttonClass","home")
         self.jobsPushButton.setCursor(QCursor(Qt.PointingHandCursor))
 
+        self.materialsPushButton = QPushButton("Materials")
+        self.materialsPushButton.setProperty("buttonClass","home")
+        self.materialsPushButton.setCursor(QCursor(Qt.PointingHandCursor))
+
+        self.invoicesPushButton = QPushButton("Invoices")
+        self.invoicesPushButton.setProperty("buttonClass","home")
+        self.invoicesPushButton.setCursor(QCursor(Qt.PointingHandCursor))
+
+        self.appointmentsPushButton = QPushButton("Appointments")
+        self.appointmentsPushButton.setProperty("buttonClass","home")
+        self.appointmentsPushButton.setCursor(QCursor(Qt.PointingHandCursor))
 
 
 
 
-        self.dbOpenLayout = QHBoxLayout()
+        self.horizontalLayout = QHBoxLayout()
 
-        self.dbOpenLayout.addWidget(self.clientsPushButton)
-        self.dbOpenLayout.addWidget(self.plasterersPushButton)
-        self.dbOpenLayout.addWidget(self.jobsPushButton)
+        self.horizontalLayout.addWidget(self.clientsPushButton)
+        self.horizontalLayout.addWidget(self.plasterersPushButton)
+        self.horizontalLayout.addWidget(self.jobsPushButton)
+        
+
+        self.hWidget1 = QWidget()
+        self.hWidget1.setLayout(self.horizontalLayout)
+
+        self.horizontalLayout2 = QHBoxLayout()
+        self.horizontalLayout2.addWidget(self.materialsPushButton)
+        self.horizontalLayout2.addWidget(self.invoicesPushButton)
+        self.horizontalLayout2.addWidget(self.appointmentsPushButton)
+
+        self.hWidget2 = QWidget()
+        self.hWidget2.setLayout(self.horizontalLayout2)
+
+        self.mainMenuLayout = QVBoxLayout()
+        self.mainMenuLayout.addWidget(self.hWidget1)
+        self.mainMenuLayout.addWidget(self.hWidget2)
 
         
-        
+
         self.dbOpenWidget = QWidget()
 
-        self.dbOpenWidget.setLayout(self.dbOpenLayout)
+        self.dbOpenWidget.setLayout(self.mainMenuLayout)
 
         self.stackedLayout.addWidget(self.dbOpenWidget)
 
@@ -470,6 +516,12 @@ program """
     def switchToAddJob(self):
         self.stackedLayout.setCurrentIndex(10)
 
+    def switchToAppointmentsMenu(self):
+        self.stackedLayout.setCurrentIndex(11)
+    def switchToInvoicesMenu(self):
+        self.stackedLayout.setCurrentIndex(12)
+    def switchToMaterialsMenu(self):
+        self.stackedLayout.setCurrentIndex(13)
     
     
     def clientsLayout(self):
@@ -483,6 +535,22 @@ program """
     def jobsLayout(self):
         self.jobsLayoutWidget = JobsMenuWidget()
         self.stackedLayout.addWidget(self.jobsLayoutWidget)
+
+
+
+
+    def appointmentsLayout(self):
+        self.appointmentsLayoutWidget = AppointmentMenuWidget()
+        self.stackedLayout.addWidget(self.appointmentsLayoutWidget)
+        
+    def invoicesLayout(self):
+        self.invoicesLayoutWidget = InvoicesMenuWidget()
+        self.stackedLayout.addWidget(self.invoicesLayoutWidget)
+
+    def materialsLayout(self):
+        self.materialsLayoutWidget = MaterialsMenuWidget()
+        self.stackedLayout.addWidget(self.materialsLayoutWidget)
+        
 
 
     def manageClientsLayout(self):

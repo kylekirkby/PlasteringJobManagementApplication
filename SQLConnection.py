@@ -194,6 +194,35 @@ PlastererAddrLine2,PlastererAddrLine3,PlastererAddrLine4,PlastererEmail,Plastere
         else:
             return False
 
+    def addJob(self, values):
+
+        query = QSqlQuery(self.db)
+        
+        query.prepare(""" INSERT INTO Job(ClientID,PlastererID,JobDescription,JobAddrLine1,JobAddrLine2,JobAddrLine3,
+JobAddrLine4)
+VALUES(:clientID, :plastererID, :description, :street, :town, :county, :postCode)""")
+
+        query.bindValue(":clientID", values["ClientID"])
+        query.bindValue(":plastererID", values["PlastererID"])
+        query.bindValue(":description", values["Description"])
+        query.bindValue(":street",values["Street"])
+        query.bindValue(":town",values["Town"])
+        query.bindValue(":county",values["County"])
+        query.bindValue(":postCode",values["PostCode"])
+
+
+        success = query.exec_()
+
+        if success:
+            return True
+        else:
+            print(values)
+            error =  query.lastError()
+            print(error.text())
+            return False
+
+    
+
     def getAllClients(self):
 
         query = QSqlQuery(self.db)
