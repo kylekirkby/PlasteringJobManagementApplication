@@ -243,6 +243,16 @@ VALUES(:clientID, :plastererID, :description, :street, :town, :county, :postCode
 
         return query
 
+    def getAllJobs(self):
+
+        query = QSqlQuery(self.db)
+
+        query.prepare("SELECT * FROM Job")
+
+        query.exec_()
+
+        return query
+
     
     def initialTable(self):
 
@@ -259,6 +269,15 @@ VALUES(:clientID, :plastererID, :description, :street, :town, :county, :postCode
         query.exec_()
 
         return query
+
+    def initialTableJ(self):
+
+        query = QSqlQuery(self.db)
+        query.prepare("SELECT * FROM Job WHERE 1=0")
+        query.exec_()
+
+        return query
+        
         
     
     def getClientData(self, clientID):
@@ -286,6 +305,19 @@ VALUES(:clientID, :plastererID, :description, :street, :town, :county, :postCode
 
             cursor = db.cursor()
             sql = "SELECT * FROM Plasterer WHERE PlastererID = ?"
+            values = (ID,)
+            cursor.execute(sql, values)
+            data = cursor.fetchone()
+            db.commit()
+
+            return data
+
+    def getJobData(self, ID):
+
+        with sqlite3.connect(self.path) as db:
+
+            cursor = db.cursor()
+            sql = "SELECT * FROM Job WHERE JobID = ?"
             values = (ID,)
             cursor.execute(sql, values)
             data = cursor.fetchone()

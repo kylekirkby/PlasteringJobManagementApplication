@@ -86,6 +86,7 @@ program """
         self.manageClientsL.addConnection(self.connection)
         self.managePlasterersL.addConnection(self.connection)
         self.addJobL.addConnection(self.connection)
+        self.manageJobsL.addConnection(self.connection)
 
        
     def dbNotOpen(self):
@@ -510,6 +511,9 @@ program """
 
     def switchToManageJobs(self):
         self.stackedLayout.setCurrentIndex(9)
+
+        query = self.connection.initialTableJ()
+        self.manageJobsL.showResults(query)
 
 
 

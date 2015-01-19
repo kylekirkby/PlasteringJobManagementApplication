@@ -173,8 +173,9 @@ class ManageJobsWidget(QWidget):
         self.jobGrid = QGridLayout()
         self.jobGrid.setSpacing(10)
 
+        self.errorTextLabel = QLabel("Errors: ")        
+        self.errorTextContentLabel = QLabel()
         
-
         self.jobStreetEditLabel = QLabel("Job Street")
         self.jobTownEditLabel = QLabel("Job Town")
         self.jobCountyEditLabel = QLabel("Job County")
@@ -183,6 +184,8 @@ class ManageJobsWidget(QWidget):
         self.jobDaysWorkedLabel = QLabel("Days worked")
         self.jobStatusLabel = QLabel("Status")
 
+        self.savePushButton = QPushButton("Save Job")
+        self.cancelPushButton = QPushButton("Cancel")
         
         self.jobStreetEdit = QLineEdit()
         self.jobTownEdit = QLineEdit()
@@ -209,7 +212,8 @@ class ManageJobsWidget(QWidget):
         self.jobStatusLabelContent = QLabel()
         self.jobDaysWorkedLabelContent = QLabel()
         
-
+        self.jobGrid.addWidget(self.errorTextLabel, 0, 0)
+        self.jobGrid.addWidget(self.errorTextContentLabel,0 ,1)
         self.jobGrid.addWidget(self.jobStreetEditLabel, 1, 0)
         self.jobGrid.addWidget(self.jobStreetEdit, 1, 1)
 
@@ -227,6 +231,10 @@ class ManageJobsWidget(QWidget):
 
         self.jobGrid.addWidget(self.jobDaysWorkedLabel, 6, 0)
         self.jobGrid.addWidget(self.jobDaysWorkedLabelContent, 6, 1)
+
+        
+        self.jobGrid.addWidget(self.cancelPushButton, 7, 0)
+        self.jobGrid.addWidget(self.savePushButton, 7, 1)
         
         
         self.jobInfoGroupBox.setLayout(self.jobGrid)
@@ -313,24 +321,18 @@ class ManageJobsWidget(QWidget):
 
     def searchingJobs(self):
         #clear edit form
-        self.firstNameEdit.clear()
-        self.surnameEdit.clear()
-        self.streetEdit.clear()
-        self.townEdit.clear()
-        self.postCodeEdit.clear()
-        self.emailEdit.clear()
-        self.phoneNumberEdit.clear()
-        self.dailyRateEdit.clear()
+        self.jobStreetEdit.clear()
+        self.jobTownEdit.clear()
+        self.jobPostCodeEdit.clear()
+        self.jobCountyEdit.setCurrentIndex(0)
 
-        self.firstNameEdit.setStyleSheet("")
-        self.surnameEdit.setStyleSheet("")
-        self.streetEdit.setStyleSheet("")
-        self.townEdit.setStyleSheet("")
-        self.countyEdit.setStyleSheet("")
-        self.postCodeEdit.setStyleSheet("")
-        self.emailEdit.setStyleSheet("")
-        self.phoneNumberEdit.setStyleSheet("")
-        self.dailyRateEdit.setStyleSheet("")
+
+
+        self.jobStreetEdit.setStyleSheet("")
+        self.jobTownEdit.setStyleSheet("")
+        self.jobCountyEdit.setStyleSheet("")
+        self.jobPostCodeEdit.setStyleSheet("")
+
 
 
         self.results_table.selectionModel().clearSelection()
@@ -338,7 +340,7 @@ class ManageJobsWidget(QWidget):
         self.searchJobsGroup.setEnabled(True)
         self.tableGroup.setEnabled(True)
         
-        self.editJobGroupBox.setEnabled(False)
+        self.jobDetailsGroupBox.setEnabled(False)
 
         
     def changeFormFields(self):
@@ -365,7 +367,7 @@ class ManageJobsWidget(QWidget):
 
                 self.searchJobsGroup.setEnabled(False)
                 self.tableGroup.setEnabled(False)
-                self.editJobGroupBox.setEnabled(True)
+                self.jobDetailsGroupBox.setEnabled(True)
 
                 self.editJobPopulate(data)
 
@@ -375,35 +377,30 @@ class ManageJobsWidget(QWidget):
                             
     def editJobPopulate(self, data):
 
-        currentId = data[0]
-        title = data[1]
-        firstName = data[2]
-        surname = data[3]
-        street = data[4]
-        town = data[5]
-        county = data[6]
-        postCode = data[7]
-        email = data[8]
-        phoneNumber = data[9]
-        dailyRate = data[10]
+        jobCurrentIdData = data[0]
+        jobClientIdData = data[1]
+        jobPlastererIdData = data[2]
+        jobInvoiceIdData = data[3]
+        jobDescriptionData = data[4]
+        jobStreetData = data[5]
+        jobTownData = data[6]
+        jobCountyData = data[7]
+        jobPostCodeData = data[8]
+        jobDaysWorkedData = data[9]
+        jobCompleteData = data[10]
 
-        self.currentMemberId = currentId
+        self.currentMemberId = jobCurrentIdData
 
-        self.titleIndex = self.titleEdit.findText(title)
-        self.titleEdit.setCurrentIndex(self.titleIndex)
+        self.jobStreetEdit.setText(jobStreetData)
+        self.jobTownEdit.setText(jobTownData)
 
-        self.firstNameEdit.setText(firstName)
-        self.surnameEdit.setText(surname)
-        self.streetEdit.setText(street)
-        self.townEdit.setText(town)
+        self.countyIndex = self.jobCountyEdit.findText(jobCountyData)
+        self.jobCountyEdit.setCurrentIndex(self.countyIndex)
 
-        self.countyIndex = self.countyEdit.findText(county)
-        self.countyEdit.setCurrentIndex(self.countyIndex)
-
-        self.postCodeEdit.setText(postCode)
-        self.emailEdit.setText(email)
-        self.phoneNumberEdit.setText(phoneNumber)
-        self.dailyRateEdit.setText(str(dailyRate))
+        self.jobPostCodeEdit.setText(jobPostCodeData)
+        self.jobStatusLabelContent.setText(jobCompleteData)
+        self.jobDaysWorkedLabelContent.setText(jobDaysWorkedData)
+        
 
         
 
@@ -423,14 +420,10 @@ class ManageJobsWidget(QWidget):
 
 
         
-        self.firstNameEdit.textChanged.connect(self.validateFirstName)
-        self.surnameEdit.textChanged.connect(self.validateSurname)
-        self.streetEdit.textChanged.connect(self.validateStreet)
-        self.townEdit.textChanged.connect(self.validateTown)
-        self.postCodeEdit.textChanged.connect(self.validatePostCode)
-        self.emailEdit.textChanged.connect(self.validateEmail)
-        self.phoneNumberEdit.textChanged.connect(self.validatePhoneNumber)
-        self.dailyRateEdit.textChanged.connect(self.validateDailyRate)
+
+        self.jobStreetEdit.textChanged.connect(self.validateStreet)
+        self.jobTownEdit.textChanged.connect(self.validateTown)
+        self.jobPostCodeEdit.textChanged.connect(self.validatePostCode)
         self.savePushButton.clicked.connect(self.validateForm)
         self.cancelPushButton.clicked.connect(self.searchingJobs)
 
@@ -479,23 +472,12 @@ class ManageJobsWidget(QWidget):
 
         self.errorMsg = ""
 
-        if self.checkFirstName == False:
-            self.errorMsg += "Invalid First Name, "
-        if self.checkSurname == False:
-            self.errorMsg += "Invalid Surname, "
         if self.checkStreet == False:
             self.errorMsg += "Invalid Street, "
         if self.checkTown == False:
             self.errorMsg += "Invalid Town, "
         if self.checkPostCode == False:
             self.errorMsg += "Invalid Post Code Format, "
-        if self.checkPhoneNumber == False:
-            self.errorMsg += "Invalid Phone Number Format, "
-        if self.checkEmail == False:
-            self.errorMsg += "Invalid Email Format, "
-        if self.checkDailyRate == False:
-            self.errorMsg += "Invalid Daily Rate Format"
-        
 
         self.errorTextContentLabel.setText(self.errorMsg)
         
@@ -511,43 +493,43 @@ class ManageJobsWidget(QWidget):
 
     def validateStreet(self):
 
-        text = self.streetEdit.text()
+        text = self.jobStreetEdit.text()
         length = len(text)
 
         if length > 5:
-            self.streetEdit.setStyleSheet("background-color:#c4df9b;")
+            self.jobStreetEdit.setStyleSheet("background-color:#c4df9b;")
             return True
         else:
-            self.streetEdit.setStyleSheet("background-color:#f6989d;")
+            self.jobStreetEdit.setStyleSheet("background-color:#f6989d;")
             return False
 
 
     def validateTown(self):
         
-        text = self.townEdit.text()
+        text = self.jobTownEdit.text()
         length = len(text)
 
         if length > 3:
-            self.townEdit.setStyleSheet("background-color:#c4df9b;")
+            self.jobTownEdit.setStyleSheet("background-color:#c4df9b;")
             return True
         else:
-            self.townEdit.setStyleSheet("background-color:#f6989d;")
+            self.jobTownEdit.setStyleSheet("background-color:#f6989d;")
             return False
 
 
     def validatePostCode(self):
         
-        text = self.postCodeEdit.text()
+        text = self.jobPostCodeEdit.text()
 
         postCodeRegEx = re.compile("[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}")
 
         match = postCodeRegEx.match(text.upper())
 
         if match:
-            self.postCodeEdit.setStyleSheet("background-color:#c4df9b;")
+            self.jobPostCodeEdit.setStyleSheet("background-color:#c4df9b;")
             return True
         else:
-            self.postCodeEdit.setStyleSheet("background-color:#f6989d;")
+            self.jobPostCodeEdit.setStyleSheet("background-color:#f6989d;")
             return False
 
 
