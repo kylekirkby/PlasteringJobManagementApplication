@@ -317,13 +317,34 @@ VALUES(:clientID, :plastererID, :description, :street, :town, :county, :postCode
         with sqlite3.connect(self.path) as db:
 
             cursor = db.cursor()
+
+            
             sql = "SELECT * FROM Job WHERE JobID = ?"
             values = (ID,)
             cursor.execute(sql, values)
             data = cursor.fetchone()
+
+
+            
+            clientId = data[1]
+            sql2 = "SELECT * FROM Client WHERE ClientID = ?"
+            values2 = (clientId,)
+            cursor.execute(sql2, values2)
+            data2 = cursor.fetchone()
+
+            
+            plastererId = data[2]
+            sql3 = "SELECT * FROM Plasterer WHERE PlastererID = ?"
+            values3 = (plastererId,)
+            cursor.execute(sql3, values3)
+            data3 = cursor.fetchone()
+            
+            
+            mainData = [data,data2,data3]
+            
             db.commit()
 
-            return data
+            return mainData
             
         
         

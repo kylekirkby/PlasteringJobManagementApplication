@@ -377,17 +377,35 @@ class ManageJobsWidget(QWidget):
                             
     def editJobPopulate(self, data):
 
-        jobCurrentIdData = data[0]
-        jobClientIdData = data[1]
-        jobPlastererIdData = data[2]
-        jobInvoiceIdData = data[3]
-        jobDescriptionData = data[4]
-        jobStreetData = data[5]
-        jobTownData = data[6]
-        jobCountyData = data[7]
-        jobPostCodeData = data[8]
-        jobDaysWorkedData = data[9]
-        jobCompleteData = data[10]
+        jobCurrentIdData = data[0][0]
+        jobClientIdData = data[0][1]
+        jobPlastererIdData = data[0][2]
+        jobInvoiceIdData = data[0][3]
+        jobDescriptionData = data[0][4]
+        jobStreetData = data[0][5]
+        jobTownData = data[0][6]
+        jobCountyData = data[0][7]
+        jobPostCodeData = data[0][8]
+        jobDaysWorkedData = data[0][9]
+        jobCompleteData = data[0][10]
+
+        clientFirstName = data[1][2]
+        clientSurname = data[1][3]
+        clientStreet = data[1][4]
+        clientTown = data[1][5]
+        clientCounty = data[1][6]
+        clientPostCode = data[1][7]
+        clientEmail = data[1][8]
+        clientPhoneNumber = data[1][9]
+
+        self.firstNameLabel.setText(clientFirstName)
+        self.surnameLabel.setText(clientSurname)
+        self.streetLabel.setText(clientStreet)
+        self.townLabel.setText(clientTown)
+        self.countyLabel.setText(clientCounty)
+        self.postCodeLabel.setText(clientPostCode)
+        self.emailLabel.setText(clientEmail)
+        self.phoneNumberLabel.setText(clientPhoneNumber)
 
         self.currentMemberId = jobCurrentIdData
 
