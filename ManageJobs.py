@@ -184,9 +184,15 @@ class ManageJobsWidget(QWidget):
         self.jobDaysWorkedLabel = QLabel("Days worked")
         self.jobStatusLabel = QLabel("Status")
 
+        self.jobDescriptionLabel = QLabel("Job Description")
+
+        
+
         self.savePushButton = QPushButton("Save Job")
         self.cancelPushButton = QPushButton("Cancel")
+
         
+        self.jobDescriptionEdit = QPlainTextEdit()
         self.jobStreetEdit = QLineEdit()
         self.jobTownEdit = QLineEdit()
         self.jobPostCodeEdit = QLineEdit()
@@ -209,11 +215,20 @@ class ManageJobsWidget(QWidget):
         self.jobCountyEdit = QComboBox()
         self.jobCountyEdit.addItems(self.counties)
 
-        self.jobStatusLabelContent = QLabel()
-        self.jobDaysWorkedLabelContent = QLabel()
+        self.statuses = ["None","Current","Complete"]
+
+        self.jobStatusEdit = QComboBox()
+        self.jobStatusEdit.addItems(self.statuses)
+
+        self.jobDeletePushButton = QPushButton("Delete Job")
+        
+        self.jobDaysWorkedEdit = QSpinBox()
+        self.jobDaysWorkedEdit.setMinimum(0)
+        
         
         self.jobGrid.addWidget(self.errorTextLabel, 0, 0)
         self.jobGrid.addWidget(self.errorTextContentLabel,0 ,1)
+        
         self.jobGrid.addWidget(self.jobStreetEditLabel, 1, 0)
         self.jobGrid.addWidget(self.jobStreetEdit, 1, 1)
 
@@ -227,14 +242,17 @@ class ManageJobsWidget(QWidget):
         self.jobGrid.addWidget(self.jobPostCodeEdit, 4, 1)
 
         self.jobGrid.addWidget(self.jobStatusLabel, 5, 0)
-        self.jobGrid.addWidget(self.jobStatusLabelContent, 5, 1)
+        self.jobGrid.addWidget(self.jobStatusEdit, 5, 1)
 
         self.jobGrid.addWidget(self.jobDaysWorkedLabel, 6, 0)
-        self.jobGrid.addWidget(self.jobDaysWorkedLabelContent, 6, 1)
+        self.jobGrid.addWidget(self.jobDaysWorkedEdit, 6, 1)
+
+        self.jobGrid.addWidget(self.jobDescriptionLabel, 7, 0)
+        self.jobGrid.addWidget(self.jobDescriptionEdit, 7, 1)
 
         
-        self.jobGrid.addWidget(self.cancelPushButton, 7, 0)
-        self.jobGrid.addWidget(self.savePushButton, 7, 1)
+        self.jobGrid.addWidget(self.cancelPushButton, 8, 0)
+        self.jobGrid.addWidget(self.savePushButton, 8, 1)
         
         
         self.jobInfoGroupBox.setLayout(self.jobGrid)
@@ -254,12 +272,14 @@ class ManageJobsWidget(QWidget):
         self.viewInvoicePushButton = QPushButton("View Invoice")
         self.printInvoicePushButton = QPushButton("Print Invoice")
         self.emailInvoicePushButton = QPushButton("Email Invoice")
+        
 
         self.hLayout = QHBoxLayout()
         self.hLayout.addWidget(self.generateInvoicePushButton)
         self.hLayout.addWidget(self.viewInvoicePushButton)
         self.hLayout.addWidget(self.printInvoicePushButton)
         self.hLayout.addWidget(self.emailInvoicePushButton)
+        self.hLayout.addWidget(self.jobDeletePushButton)
 
         self.jobFunctionsGroupBox.setLayout(self.hLayout)
 
@@ -290,7 +310,7 @@ class ManageJobsWidget(QWidget):
 
         queryText = self.searchField.text()
 
-        query = self.connection.getSearchQuery2(queryText)
+        query = self.connection.getSearchQueryJobs(queryText)
 
         #print(queryText)
 
@@ -325,6 +345,18 @@ class ManageJobsWidget(QWidget):
         self.jobTownEdit.clear()
         self.jobPostCodeEdit.clear()
         self.jobCountyEdit.setCurrentIndex(0)
+        self.jobStatusEdit.setCurrentIndex(0)
+        self.jobDaysWorkedEdit.setValue(0)
+        self.jobDescriptionEdit.clear()
+
+        self.firstNameLabel.clear()
+        self.surnameLabel.clear()
+        self.streetLabel.clear()
+        self.townLabel.clear()
+        self.countyLabel.clear()
+        self.postCodeLabel.clear()
+        self.emailLabel.clear()
+        self.phoneNumberLabel.clear()
 
 
 
@@ -332,6 +364,9 @@ class ManageJobsWidget(QWidget):
         self.jobTownEdit.setStyleSheet("")
         self.jobCountyEdit.setStyleSheet("")
         self.jobPostCodeEdit.setStyleSheet("")
+        self.jobDescriptionEdit.setStyleSheet("")
+        self.jobDaysWorkedEdit.setStyleSheet("")
+        self.jobStatusEdit.setStyleSheet("")
 
 
 
@@ -404,8 +439,19 @@ class ManageJobsWidget(QWidget):
         self.townLabel.setText(clientTown)
         self.countyLabel.setText(clientCounty)
         self.postCodeLabel.setText(clientPostCode)
+
+        if jobDaysWorkedData != None:
+            self.jobDaysWorkedEdit.setValue(jobDaysWorkedData)
+
+        if jobCompleteData != None:
+            indexOfStatus = self.jobStatusEdit.findText(jobCompleteData)
+            self.jobStatusEdit.setCurrentIndex(indexOfStatus)
+        else:
+            self.jobStatusEdit.setCurrentIndex(0)
+        
         self.emailLabel.setText(clientEmail)
         self.phoneNumberLabel.setText(clientPhoneNumber)
+        
 
         self.currentMemberId = jobCurrentIdData
 
@@ -416,8 +462,8 @@ class ManageJobsWidget(QWidget):
         self.jobCountyEdit.setCurrentIndex(self.countyIndex)
 
         self.jobPostCodeEdit.setText(jobPostCodeData)
-        self.jobStatusLabelContent.setText(jobCompleteData)
-        self.jobDaysWorkedLabelContent.setText(jobDaysWorkedData)
+
+        self.jobDescriptionEdit.setPlainText(jobDescriptionData)
         
 
         
@@ -436,12 +482,11 @@ class ManageJobsWidget(QWidget):
         self.showAllJobsPushButton.clicked.connect(self.showAllJobsInTable)
         #self.results_table.selectionModel().selectionChanged.connect(self.changeFormFields)
 
-
-        
-
         self.jobStreetEdit.textChanged.connect(self.validateStreet)
         self.jobTownEdit.textChanged.connect(self.validateTown)
         self.jobPostCodeEdit.textChanged.connect(self.validatePostCode)
+        self.jobDescriptionEdit.textChanged.connect(self.validateDescription)
+        
         self.savePushButton.clicked.connect(self.validateForm)
         self.cancelPushButton.clicked.connect(self.searchingJobs)
 
@@ -548,6 +593,18 @@ class ManageJobsWidget(QWidget):
             return True
         else:
             self.jobPostCodeEdit.setStyleSheet("background-color:#f6989d;")
+            return False
+
+    def validateDescription(self):
+        
+        text = self.jobDescriptionEdit.toPlainText()
+        length = len(text)
+
+        if length > 3:
+            self.jobDescriptionEdit.setStyleSheet("background-color:#c4df9b;")
+            return True
+        else:
+            self.jobDescriptionEdit.setStyleSheet("background-color:#f6989d;")
             return False
 
 

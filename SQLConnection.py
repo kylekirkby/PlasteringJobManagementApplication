@@ -416,7 +416,7 @@ VALUES(:clientID, :plastererID, :description, :street, :town, :county, :postCode
         searchText = queryText
 
         if searchText == "":
-            query = self.initialTable()
+            query = self.initialTableP()
 
             return query
         else:
@@ -443,6 +443,46 @@ VALUES(:clientID, :plastererID, :description, :street, :town, :county, :postCode
             query.bindValue(":searchString6", searchText)
             query.bindValue(":searchString7", searchText)
             query.bindValue(":searchString8", searchText)
+
+            success = query.exec_()
+
+            if success:
+                return query
+            else:
+                
+                error =  query.lastError()
+                print(error.text())
+
+                return query
+            
+    def getSearchQueryJobs(self, queryText):
+
+        searchText = queryText
+
+        if searchText == "":
+            query = self.initialTableJ()
+
+            return query
+        else:
+
+            query = QSqlQuery(self.db)
+
+            query.prepare("""SELECT * FROM Job WHERE
+       JobDescription LIKE '%'||:searchString||'%' OR
+       JobAddrLine1 LIKE '%'||:searchString2||'%' OR
+       JobAddrLine2 LIKE '%'||:searchString3||'%' OR
+       JobAddrLine3 LIKE '%'||:searchString4||'%' OR
+       JobAddrLine4 LIKE '%'||:searchString5||'%' OR
+       JobID LIKE '%'||:searchString6||'%'; """)
+        
+
+            query.bindValue(":searchString", searchText)
+            query.bindValue(":searchString2", searchText)
+            query.bindValue(":searchString3", searchText)
+            query.bindValue(":searchString4", searchText)
+            query.bindValue(":searchString5", searchText)
+            query.bindValue(":searchString6", searchText)
+
 
             success = query.exec_()
 
