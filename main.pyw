@@ -31,7 +31,7 @@ program """
 
         self.setWindowTitle("Plastering Job Management Application")
         self.resize(900,800)
-        self.icon = QIcon(QPixmap("./icon.png"))
+        self.icon = QIcon(QPixmap("./Images/icon.png"))
         self.setWindowIcon(self.icon)
 
         
@@ -324,12 +324,18 @@ program """
         
     def createNewDatabase(self):
 
-        path = QFileDialog.getSaveFileName()
+        dialog = QFileDialog()
+        dialog.setDirectory("./Data/")
+
+        path = dialog.getSaveFileName()
+
+        # Append extension if not there yet
+        if not path.endswith(".db"):
+            path += ".db"
 
         if self.connection:
             self.close_connection()
 
-        print(path)
         if path != "":
             self.connection  = SQLConnection(path)
             self.connection.create_database()
@@ -349,17 +355,23 @@ program """
         if self.connection:
             self.close_connection()
 
-        path = QFileDialog.getOpenFileName()
+        dialog = QFileDialog()
+        dialog.setDirectory("./Data/")
 
-        if path != "":
+        path = dialog.getOpenFileName()
 
-            self.connection = SQLConnection(path)        
-            opened = self.connection.open_database()
+        # Append extension if not there yet
+        if path.endswith(".db"):
+            if path != "":
+                self.connection = SQLConnection(path)        
+                opened = self.connection.open_database()
 
-            if opened:
-                self.dbOpen()
-                self.statusBar.showMessage("Database has been opened.")
-  
+                if opened:
+                    self.dbOpen()
+                    self.statusBar.showMessage("Database has been opened.")
+        else:
+            infoText = """This is not a correct '.db' database file!"""
+            QMessageBox.warning(self, "Incorrect Database!", infoText)
         
 
     def close_connection(self):
@@ -591,7 +603,7 @@ program """
 
 def showSplash():
     
-    splash_pix = QPixmap('splash.png')
+    splash_pix = QPixmap('./Images/splash.png')
     splash = QSplashScreen(splash_pix, Qt.WindowStaysOnTopHint)
     splash.setMask(splash_pix.mask())
     splash.show()

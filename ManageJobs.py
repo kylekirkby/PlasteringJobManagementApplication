@@ -188,7 +188,7 @@ class ManageJobsWidget(QWidget):
 
         
 
-        self.savePushButton = QPushButton("Save Job")
+        self.savePushButton = QPushButton("Save Changes")
         self.cancelPushButton = QPushButton("Cancel")
 
         
@@ -251,7 +251,7 @@ class ManageJobsWidget(QWidget):
         self.jobGrid.addWidget(self.jobDescriptionEdit, 7, 1)
 
         
-        self.jobGrid.addWidget(self.cancelPushButton, 8, 0)
+        #self.jobGrid.addWidget(self.cancelPushButton, 8, 0)
         self.jobGrid.addWidget(self.savePushButton, 8, 1)
         
         
@@ -261,7 +261,8 @@ class ManageJobsWidget(QWidget):
         self.hLayout = QHBoxLayout()
         self.hLayout.addWidget(self.clientJobDetailsGroupBox)
         self.hLayout.addWidget(self.jobInfoGroupBox)
-        
+
+                
         self.hWidget = QWidget()
         self.hWidget.setLayout(self.hLayout)
 
@@ -287,6 +288,7 @@ class ManageJobsWidget(QWidget):
         self.vLayout = QVBoxLayout()
         self.vLayout.addWidget(self.jobFunctionsGroupBox)
         self.vLayout.addWidget(self.hWidget)
+        self.vLayout.addWidget(self.cancelPushButton)
         
 
         self.jobDetailsGroupBox.setLayout(self.vLayout)
@@ -492,20 +494,17 @@ class ManageJobsWidget(QWidget):
 
 
     def addUpdatedDataToDb(self):
-        county = str(self.countyEdit.currentText())
-        title = str(self.titleEdit.currentText())
 
-        values = {"ID" : self.currentMemberId,
-                    "Title": title,
-                   "FirstName": self.firstNameEdit.text(),
-                  "Surname": self.surnameEdit.text(),
-                  "Street": self.streetEdit.text(),
-                  "Town": self.townEdit.text(),
-                  "County": county,
-                  "PostCode": self.postCodeEdit.text(),
-                  "Email": self.emailEdit.text(),
-                   "PhoneNumber": self.phoneNumberEdit.text(),
-                  "DailyRate" : self.dailyRateEdit.text()}
+        values = {"JobID":self.currentMemberId,
+                  "JobStreet" : self.jobStreetEdit.text(),
+                    "JobTown": self.jobTownEdit.text(),
+                   "JobCounty": str(self.jobCountyEdit.currentText()),
+                  "JobPostCode": self.jobPostCodeEdit.text(),
+                  "JobStatus": str(self.jobStatusEdit.currentText()),
+                  "JobDaysWorked": self.jobDaysWorkedEdit.value(),
+                  "JobDescription": self.jobDescriptionEdit.toPlainText()}
+
+        #print(values)
 
         jobAdded = self.connection.updateJob(values)
 
@@ -514,14 +513,14 @@ class ManageJobsWidget(QWidget):
             self.searchingJobs()
 
             #clear the table
-            query = self.connection.initialTableP()
+            query = self.connection.initialTableJ()
             self.showResults(query)
              
-            infoText = """ The jobs information has been updated!"""
+            infoText = """ The job details have been updated!"""
             QMessageBox.information(self, "Job Info Updated!", infoText)
             
         else:
-            infoText = """ The job was not updated successfully! """
+            infoText = """ The job details were not updated successfully! """
 
             QMessageBox.critical(self, "Job Not Updated!", infoText)
         
@@ -531,6 +530,7 @@ class ManageJobsWidget(QWidget):
         self.checkStreet = self.validateStreet()
         self.checkTown = self.validateTown()
         self.checkPostCode = self.validatePostCode()
+        self.checkDescription = self.validateDescription()
 
 
         self.errorMsg = ""
@@ -541,6 +541,8 @@ class ManageJobsWidget(QWidget):
             self.errorMsg += "Invalid Town, "
         if self.checkPostCode == False:
             self.errorMsg += "Invalid Post Code Format, "
+        if self.checkDescription == False:
+            self.errorMsf += "Invalid Description, "
 
         self.errorTextContentLabel.setText(self.errorMsg)
         

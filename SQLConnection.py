@@ -73,6 +73,36 @@ class SQLConnection:
         else:
             return False
 
+        
+    def updateJob(self, values):
+
+        query = QSqlQuery(self.db)
+
+        query.prepare("""
+UPDATE Job SET JobAddrLine1 = :jobStreet, JobAddrLine2 = :jobTown, JobAddrLine3 = :jobCounty,
+JobAddrLine4 = :jobPostCode, JobComplete = :jobStatus, JobDaysWorked = :jobDaysWorked,
+JobDescription = :jobDescription WHERE JobID = :jobId;
+""")
+        query.bindValue(":jobId",values["JobID"])
+        query.bindValue(":jobStreet",values["JobStreet"])
+        query.bindValue(":jobTown",values["JobTown"])
+        query.bindValue(":jobCounty",values["JobCounty"])
+        query.bindValue(":jobPostCode",values["JobPostCode"])
+        query.bindValue(":jobStatus",values["JobStatus"])
+        query.bindValue(":jobDaysWorked",values["JobDaysWorked"])
+        query.bindValue(":jobDescription",values["JobDescription"])
+ 
+
+
+        success = query.exec_()
+
+        if success:
+            self.db.commit()
+            return True
+        else:
+            return False
+
+        
     def updateClient(self, values):
 
         query = QSqlQuery(self.db)

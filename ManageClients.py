@@ -154,7 +154,7 @@ class ManageClientsWidget(QWidget):
         self.emailEdit = QLineEdit()
         self.phoneNumberEdit = QLineEdit()
 
-        self.savePushButton = QPushButton("Save Info")
+        self.savePushButton = QPushButton("Save Changes")
         self.cancelPushButton = QPushButton("Cancel Edit")
 
 
