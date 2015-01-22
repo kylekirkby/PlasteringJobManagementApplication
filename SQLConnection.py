@@ -251,6 +251,49 @@ VALUES(:clientID, :plastererID, :description, :street, :town, :county, :postCode
             print(error.text())
             return False
 
+
+    def addAppointment(self, values):
+
+        query = QSqlQuery(self.db)
+        
+        query.prepare(""" INSERT INTO Appointment(JobID,AppointmentDate,AppointmentTime)
+VALUES(:jobId, :appointmentDate, :appointmentTime)""")
+
+        query.bindValue(":jobId", values["JobId"])
+        query.bindValue(":appointmentDate", values["AppointmentDate"])
+        query.bindValue(":appointmentTime", values["AppointmentTime"])
+
+        success = query.exec_()
+
+        if success:
+            return True
+        else:
+            print(values)
+            error =  query.lastError()
+            print(error.text())
+            return False
+
+    def addMaterial(self, values):
+
+        query = QSqlQuery(self.db)
+
+        query.prepare("""INSERT INTO Material(MaterialName,MaterialPrice) VALUES(:materialName,:materialPrice); """)
+
+        query.bindValue(":materialName", values["MaterialName"])
+        query.bindValue(":materialPrice", float(values["MaterialPrice"]))
+
+
+        success = query.exec_()
+
+        if success:
+            return True
+        else:
+            print(values)
+            error =  query.lastError()
+            print(error.text())
+            return False
+        
+
     
 
     def getAllClients(self):

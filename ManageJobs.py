@@ -273,9 +273,11 @@ class ManageJobsWidget(QWidget):
         self.viewInvoicePushButton = QPushButton("View Invoice")
         self.printInvoicePushButton = QPushButton("Print Invoice")
         self.emailInvoicePushButton = QPushButton("Email Invoice")
-        
+        self.addJobMaterialsPushButton = QPushButton("Add Job Materials")
+
 
         self.hLayout = QHBoxLayout()
+        self.hLayout.addWidget(self.addJobMaterialsPushButton)
         self.hLayout.addWidget(self.generateInvoicePushButton)
         self.hLayout.addWidget(self.viewInvoicePushButton)
         self.hLayout.addWidget(self.printInvoicePushButton)

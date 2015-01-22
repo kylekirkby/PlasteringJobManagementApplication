@@ -17,6 +17,8 @@ from MaterialsMenu import *
 from AddClient import *
 from AddPlasterer import *
 from AddJob import *
+from AddMaterial import *
+from AddAppointment import *
 
 from ManageClients import *
 from ManagePlasterers import *
@@ -71,6 +73,8 @@ program """
         self.appointmentsLayout()
         self.invoicesLayout()
         self.materialsLayout()
+        self.addMaterialLayout()
+        self.addAppointmentLayout()
 
         #Disable database related actions
         self.dbNotOpen()
@@ -87,6 +91,8 @@ program """
         self.managePlasterersL.addConnection(self.connection)
         self.addJobL.addConnection(self.connection)
         self.manageJobsL.addConnection(self.connection)
+        self.addMaterialL.addConnection(self.connection)
+        self.addAppointmentL.addConnection(self.connection)
 
        
     def dbNotOpen(self):
@@ -112,6 +118,8 @@ program """
 
         self.addMaterial.setEnabled(False)
         self.manageMaterials.setEnabled(False)
+
+        self.analysePay.setEnabled(False)
 
         self.stackedLayout.setCurrentIndex(0)
     
@@ -142,6 +150,9 @@ program """
         self.openDatabase.setEnabled(False)
         self.closeDatabase.setEnabled(True)
 
+        self.analysePay.setEnabled(True)
+
+
         self.stackedLayout.setCurrentIndex(1)
 
         self.addDbConnectionsToWidgets()
@@ -171,6 +182,8 @@ program """
 
         self.addInvoice = QAction("New Invoice", self)
         self.manageInvoices = QAction("Manage Invoices", self)
+
+        self.analysePay = QAction("Analyse Pay", self)
         
 
         self.openDatabase = QAction("Open Database", self)
@@ -215,6 +228,10 @@ program """
         self.invoicesMenu = self.menu.addMenu("Invoices")
         self.invoicesMenu.addAction(self.addInvoice)
         self.invoicesMenu.addAction(self.manageInvoices)
+
+        #Graphs Menu
+        self.graphMenu = self.menu.addMenu("Pay Analysis")
+        self.graphMenu.addAction(self.analysePay)
 
 
 
@@ -291,17 +308,21 @@ program """
         self.clientsPushButton.clicked.connect(self.switchToClientsMenu)
         self.plasterersPushButton.clicked.connect(self.switchToPlasterersMenu)
 
-
+        #Clients
+        
         self.clientsLayoutWidget.backButton.clicked.connect(self.switchToMainMenu)
         self.clientsLayoutWidget.addClientPushButton.clicked.connect(self.switchToAddClient)
         self.clientsLayoutWidget.manageClientsPushButton.clicked.connect(self.switchToManageClients)
+
+        #Plasterers
         
         self.plasterersLayoutWidget.addPlastererPushButton.clicked.connect(self.switchToAddPlasterer)
         self.plasterersLayoutWidget.managePlasterersPushButton.clicked.connect(self.switchToManagePlasterers)
         self.plasterersLayoutWidget.backButton.clicked.connect(self.switchToMainMenu)
 
+        #Jobs
+        
         self.jobsPushButton.clicked.connect(self.switchToJobsMenu)
-
         self.jobsLayoutWidget.backButton.clicked.connect(self.switchToMainMenu)
         
         self.addClientL.cancelFormButton.clicked.connect(self.switchToClientsMenu)
@@ -312,14 +333,22 @@ program """
 
         self.jobsLayoutWidget.addJobPushButton.clicked.connect(self.switchToAddJob)
 
-        self.materialsPushButton.clicked.connect(self.switchToMaterialsMenu)
         self.invoicesPushButton.clicked.connect(self.switchToInvoicesMenu)
         self.appointmentsPushButton.clicked.connect(self.switchToAppointmentsMenu)
 
         self.appointmentsLayoutWidget.backButton.clicked.connect(self.switchToMainMenu)
         self.invoicesLayoutWidget.backButton.clicked.connect(self.switchToMainMenu)
-        self.materialsLayoutWidget.backButton.clicked.connect(self.switchToMainMenu)
 
+        #Materials
+        self.materialsPushButton.clicked.connect(self.switchToMaterialsMenu)
+        self.materialsLayoutWidget.backButton.clicked.connect(self.switchToMainMenu)
+        self.materialsLayoutWidget.addMaterialPushButton.clicked.connect(self.switchToAddMaterial)
+        self.addMaterial.triggered.connect(self.switchToAddMaterial)
+        self.addMaterialL.cancelFormButton.clicked.connect(self.switchToMaterialsMenu)
+
+        #Appoinements
+        self.appointmentsLayoutWidget.addAppointmentPushButton.clicked.connect(self.switchToAddAppointment)
+        self.addAppointment.triggered.connect(self.switchToAddAppointment)
 
         
     def createNewDatabase(self):
@@ -473,71 +502,54 @@ program """
         self.openDbPushButton.setCursor(QCursor(Qt.PointingHandCursor))
 
 
-
-
-
         self.mainLayout = QHBoxLayout()
-
         self.mainLayout.addWidget(self.newDbPushButton)
         self.mainLayout.addWidget(self.openDbPushButton)
-        
-        
         self.mainWidget = QWidget()
-
         self.mainWidget.setLayout(self.mainLayout)
-
         self.stackedLayout.addWidget(self.mainWidget)
 
     def switchToClientsMenu(self):
         self.stackedLayout.setCurrentIndex(2)
-
     def switchToPlasterersMenu(self):
         self.stackedLayout.setCurrentIndex(3)
-
     def switchToMainMenu(self):
         self.stackedLayout.setCurrentIndex(1)
-
     def switchToAddClient(self):
         self.stackedLayout.setCurrentIndex(4)
-
-
     def switchToAddPlasterer(self):
         self.stackedLayout.setCurrentIndex(5)
-
     def switchToJobsMenu(self):
         self.stackedLayout.setCurrentIndex(6)
-
     def switchToManageClients(self):
         self.stackedLayout.setCurrentIndex(7)
         query = self.connection.initialTable()
-        
         self.manageClientsL.showResults(query)
-
-
     def switchToManagePlasterers(self):
         self.stackedLayout.setCurrentIndex(8)
-        
         query = self.connection.initialTableP()
-
         self.managePlasterersL.showResults(query)
-
     def switchToManageJobs(self):
         self.stackedLayout.setCurrentIndex(9)
-
         query = self.connection.initialTableJ()
         self.manageJobsL.showResults(query)
-
-
-
     def switchToAddJob(self):
         self.stackedLayout.setCurrentIndex(10)
-
     def switchToAppointmentsMenu(self):
         self.stackedLayout.setCurrentIndex(11)
     def switchToInvoicesMenu(self):
         self.stackedLayout.setCurrentIndex(12)
     def switchToMaterialsMenu(self):
         self.stackedLayout.setCurrentIndex(13)
+    def switchToAddMaterial(self):
+        self.stackedLayout.setCurrentIndex(14)
+    def switchToAddAppointment(self):
+        self.stackedLayout.setCurrentIndex(15)
+
+
+
+
+    #----------Add Widgets to Stacked Layout ---------
     
     
     def clientsLayout(self):
@@ -552,9 +564,6 @@ program """
         self.jobsLayoutWidget = JobsMenuWidget()
         self.stackedLayout.addWidget(self.jobsLayoutWidget)
 
-
-
-
     def appointmentsLayout(self):
         self.appointmentsLayoutWidget = AppointmentMenuWidget()
         self.stackedLayout.addWidget(self.appointmentsLayoutWidget)
@@ -566,8 +575,6 @@ program """
     def materialsLayout(self):
         self.materialsLayoutWidget = MaterialsMenuWidget()
         self.stackedLayout.addWidget(self.materialsLayoutWidget)
-        
-
 
     def manageClientsLayout(self):
         self.manageClientsL = ManageClientsWidget(self)
@@ -581,7 +588,6 @@ program """
     def manageJobsLayout(self):
         self.manageJobsL = ManageJobsWidget(self)
         self.stackedLayout.addWidget(self.manageJobsL)
-        
 
     def addClientLayout(self):
         self.addClientL = AddClientWidget(self)
@@ -594,6 +600,17 @@ program """
     def addJobLayout(self):
         self.addJobL = AddJobWidget(self)
         self.stackedLayout.addWidget(self.addJobL)
+
+    def addMaterialLayout(self):
+        self.addMaterialL = AddMaterialWidget(self)
+        self.stackedLayout.addWidget(self.addMaterialL)
+
+    def addAppointmentLayout(self):
+        self.addAppointmentL = AddAppointmentWidget(self)
+        self.stackedLayout.addWidget(self.addAppointmentL)
+
+
+        
         
     def showAboutMessageBox(self):
 
