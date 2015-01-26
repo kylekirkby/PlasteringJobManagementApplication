@@ -29,7 +29,7 @@ class SQLConnection:
             return opened_ok
         
         else:
-            
+            1
             return False
 
     
@@ -428,7 +428,8 @@ VALUES(:jobId, :appointmentDate, :appointmentTime)""")
         searchText = queryText
 
         if searchText == "":
-            query = self.initialTable()
+            #query = self.initialTable()
+            query = self.getAllClients()
 
             return query
         else:
@@ -489,7 +490,7 @@ VALUES(:jobId, :appointmentDate, :appointmentTime)""")
         searchText = queryText
 
         if searchText == "":
-            query = self.initialTableP()
+            query = self.getAllPlasterers()
 
             return query
         else:

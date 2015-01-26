@@ -23,6 +23,9 @@ from AddAppointment import *
 from ManageClients import *
 from ManagePlasterers import *
 from ManageJobs import *
+from ManageAppointments import *
+
+
 
 class MainWindow(QMainWindow):
     """ This is the main window class for the plastering job management
@@ -75,6 +78,7 @@ program """
         self.materialsLayout()
         self.addMaterialLayout()
         self.addAppointmentLayout()
+        self.manageAppointmentsLayout()
 
         #Disable database related actions
         self.dbNotOpen()
@@ -93,6 +97,7 @@ program """
         self.manageJobsL.addConnection(self.connection)
         self.addMaterialL.addConnection(self.connection)
         self.addAppointmentL.addConnection(self.connection)
+        self.manageAppointmentsL.addConnection(self.connection)
 
        
     def dbNotOpen(self):
@@ -349,6 +354,8 @@ program """
         #Appoinements
         self.appointmentsLayoutWidget.addAppointmentPushButton.clicked.connect(self.switchToAddAppointment)
         self.addAppointment.triggered.connect(self.switchToAddAppointment)
+        self.manageAppointments.triggered.connect(self.switchToManageAppointments)
+        self.appointmentsLayoutWidget.manageAppointmentsPushButton.clicked.connect(self.switchToManageAppointments)
 
         
     def createNewDatabase(self):
@@ -545,6 +552,11 @@ program """
         self.stackedLayout.setCurrentIndex(14)
     def switchToAddAppointment(self):
         self.stackedLayout.setCurrentIndex(15)
+    def switchToManageAppointments(self):
+        self.stackedLayout.setCurrentIndex(16)
+        query = self.connection.getAllJobs()
+        self.manageAppointmentsL.showResults(query)
+        
 
 
 
@@ -608,6 +620,10 @@ program """
     def addAppointmentLayout(self):
         self.addAppointmentL = AddAppointmentWidget(self)
         self.stackedLayout.addWidget(self.addAppointmentL)
+
+    def manageAppointmentsLayout(self):
+        self.manageAppointmentsL = ManageAppointmentsWidget(self)
+        self.stackedLayout.addWidget(self.manageAppointmentsL)
 
 
         
