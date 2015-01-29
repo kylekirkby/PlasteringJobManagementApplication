@@ -29,7 +29,7 @@ class SQLConnection:
             return opened_ok
         
         else:
-            1
+            
             return False
 
     
@@ -325,7 +325,18 @@ VALUES(:jobId, :appointmentDate, :appointmentTime)""")
         query.exec_()
 
         return query
+    
+    def getAppointments(self, jobId):
 
+        query = QSqlQuery(self.db)
+
+        query.prepare("SELECT * FROM Appointment WHERE JobID = :id ")
+
+        query.bindValue(":id", jobId)
+        
+        query.exec_()
+
+        return query
     
     def initialTable(self):
 
@@ -379,6 +390,19 @@ VALUES(:jobId, :appointmentDate, :appointmentTime)""")
             cursor = db.cursor()
             sql = "SELECT * FROM Plasterer WHERE PlastererID = ?"
             values = (ID,)
+            cursor.execute(sql, values)
+            data = cursor.fetchone()
+            db.commit()
+
+            return data
+        
+    def getAppointmentData(self, appointmentId):
+
+        with sqlite3.connect(self.path) as db:
+
+            cursor = db.cursor()
+            sql = "SELECT * FROM Appointment WHERE AppointmentID = ?"
+            values = (appointmentId,)
             cursor.execute(sql, values)
             data = cursor.fetchone()
             db.commit()

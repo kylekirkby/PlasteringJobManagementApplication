@@ -37,10 +37,22 @@ class AddJobWidget(QWidget):
         allClientsQuery = self.connection.getAllClients()        
         self.showClientResults(allClientsQuery)
     
+        return True
 
+    def searchForPlasterer(self):
+        
+        queryText = self.searchPlasterersField.text()
+        query = self.connection.getSearchQuery2(queryText)
+        self.showPlastererResults(query)
 
         return True
 
+    def searchForClient(self):
+
+        queryText = self.searchClientsField.text()
+        query = self.connection.getSearchQuery(queryText)
+        self.showClientResults(query)
+        return True
 
 
     def validateStreet(self):
@@ -109,6 +121,9 @@ class AddJobWidget(QWidget):
         self.jobCounty.setCurrentIndex(0)
         self.jobPostCode.clear()
         self.jobDescription.clear()
+
+        self.searchPlasterersField.clear()
+        self.searchClientsField.clear()
         
         self.jobStreet.setStyleSheet("background-color:#FFF;")
         self.jobTown.setStyleSheet("background-color:#FFF;")
@@ -224,12 +239,11 @@ class AddJobWidget(QWidget):
         numberOfRowsSelected = len(rows)
     
         if numberOfRowsSelected == 1:
-            if self.currentRow != rows[0]:
-                self.currentRow = rows[0]
-                #cliID = int(self.currentRow) + 1
-                cliID = self.model.record(self.currentRow).field(0).value()
+            self.currentRow = rows[0]
+            #cliID = int(self.currentRow) + 1
+            cliID = self.model.record(self.currentRow).field(0).value()
 
-                self.updateSelectedClient(cliID)
+            self.updateSelectedClient(cliID)
 
 
     def getSelectedPlasterer(self):
@@ -246,12 +260,11 @@ class AddJobWidget(QWidget):
         numberOfRowsSelected = len(rows)
     
         if numberOfRowsSelected == 1:
-            if self.currentRow2 != rows[0]:
-                self.currentRow2 = rows[0]
-                #cliID = int(self.currentRow) + 1
-                plastererID = self.plastererModel.record(self.currentRow2).field(0).value()
+            self.currentRow2 = rows[0]
+            #cliID = int(self.currentRow) + 1
+            plastererID = self.plastererModel.record(self.currentRow2).field(0).value()
 
-                self.updateSelectedPlasterer(plastererID)
+            self.updateSelectedPlasterer(plastererID)
 
     def clientTableWidget(self):
 
@@ -287,9 +300,13 @@ class AddJobWidget(QWidget):
         self.mainWidget = QWidget()
         self.mainWidget.setLayout(self.vBox)
 
+        self.searchClientsField.textChanged.connect(self.searchForClient)
+
 
 
         return self.mainWidget
+
+    
 
     def plastererTableWidget(self):
 
@@ -325,6 +342,8 @@ class AddJobWidget(QWidget):
         self.mainWidget2 = QWidget()
         self.mainWidget2.setLayout(self.vBox)
 
+        self.searchPlasterersField.textChanged.connect(self.searchForPlasterer)
+
         return self.mainWidget2
 
     
@@ -338,9 +357,6 @@ class AddJobWidget(QWidget):
 
         self.plastererIDContent.setText(str(plastererID))
 
-    def searchForClient(self, queryText):
-        pass
-        
 
     def layout(self):
 

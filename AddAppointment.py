@@ -73,7 +73,7 @@ class AddAppointmentWidget(QWidget):
 
         appointmentTime = self.appointmentTimeEdit.time()
 
-        appointmentTimeFormatted = appointmentTime.toString("h:m ap")
+        appointmentTimeFormatted = appointmentTime.toString("HH:mm ap")
 
         values = { "JobId": self.jobIDLabel.text(),
                    "AppointmentDate": self.appointmentDateDisplayLabel.text(),

@@ -398,17 +398,17 @@ class ManageJobsWidget(QWidget):
         numberOfRowsSelected = len(rows)
     
         if numberOfRowsSelected == 1:
-            if self.currentRow != rows[0]:
-                self.currentRow = rows[0]
-                cliID = int(self.currentRow) + 1
-                data = self.connection.getJobData(cliID)
+
+            self.currentRow = rows[0]
+            cliID = int(self.currentRow) + 1
+            data = self.connection.getJobData(cliID)
 
 
-                self.searchJobsGroup.setEnabled(False)
-                self.tableGroup.setEnabled(False)
-                self.jobDetailsGroupBox.setEnabled(True)
+            self.searchJobsGroup.setEnabled(False)
+            self.tableGroup.setEnabled(False)
+            self.jobDetailsGroupBox.setEnabled(True)
 
-                self.editJobPopulate(data)
+            self.editJobPopulate(data)
 
 
 

@@ -282,18 +282,17 @@ class ManageClientsWidget(QWidget):
         numberOfRowsSelected = len(rows)
     
         if numberOfRowsSelected == 1:
-            if self.currentRow != rows[0]:
-                self.currentRow = rows[0]
-                #cliID = int(self.currentRow) + 1
-                cliID = self.model.record(self.currentRow).field(0).value()
-                data = self.connection.getClientData(cliID)
+            self.currentRow = rows[0]
+            #cliID = int(self.currentRow) + 1
+            cliID = self.model.record(self.currentRow).field(0).value()
+            data = self.connection.getClientData(cliID)
 
 
-                self.searchClientsGroup.setEnabled(False)
-                self.tableGroup.setEnabled(False)
-                self.editClientGroupBox.setEnabled(True)
+            self.searchClientsGroup.setEnabled(False)
+            self.tableGroup.setEnabled(False)
+            self.editClientGroupBox.setEnabled(True)
 
-                self.editClientPopulate(data)
+            self.editClientPopulate(data)
 
 
 

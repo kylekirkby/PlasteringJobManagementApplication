@@ -294,18 +294,17 @@ class ManagePlasterersWidget(QWidget):
         numberOfRowsSelected = len(rows)
     
         if numberOfRowsSelected == 1:
-            if self.currentRow != rows[0]:
-                self.currentRow = rows[0]
-                #cliID = int(self.currentRow) + 1
-                cliID = self.model.record(self.currentRow).field(0).value()
-                data = self.connection.getPlastererData(cliID)
+            self.currentRow = rows[0]
+            #cliID = int(self.currentRow) + 1
+            cliID = self.model.record(self.currentRow).field(0).value()
+            data = self.connection.getPlastererData(cliID)
 
 
-                self.searchPlasterersGroup.setEnabled(False)
-                self.tableGroup.setEnabled(False)
-                self.editPlastererGroupBox.setEnabled(True)
+            self.searchPlasterersGroup.setEnabled(False)
+            self.tableGroup.setEnabled(False)
+            self.editPlastererGroupBox.setEnabled(True)
 
-                self.editPlastererPopulate(data)
+            self.editPlastererPopulate(data)
 
 
 
