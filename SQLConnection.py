@@ -164,6 +164,27 @@ WHERE PlastererID = :plastererID;
             return True
         else:
             return False
+
+    def updateAppointment(self, values):
+
+        query = QSqlQuery(self.db)
+
+        query.prepare("""
+UPDATE Appointment SET JobID = :jobId, AppointmentDate = :appointmentDate, AppointmentTime = :appointmentTime
+WHERE AppointmentId = :appointmentId;
+""")
+        query.bindValue(":jobId",values["JobID"])
+        query.bindValue(":appointmentDate",values["AppointmentDate"])
+        query.bindValue(":appointmentTime",values["AppointmentTime"])
+        query.bindValue(":appointmentId",values["AppointmentID"])
+
+        success = query.exec_()
+
+        if success:
+            self.db.commit()
+            return True
+        else:
+            return False
             
     def addClient(self, values):
 
@@ -358,6 +379,15 @@ VALUES(:jobId, :appointmentDate, :appointmentTime)""")
 
         query = QSqlQuery(self.db)
         query.prepare("SELECT * FROM Job WHERE 1=0")
+        query.exec_()
+
+        return query
+
+    def initialTableJM(self):
+
+        query = QSqlQuery(self.db)
+        query.prepare("""SELECT Material.MaterialName,Material.MaterialPrice,
+JobMaterials.JobMaterialsQuantity FROM Material,JobMaterials WHERE 1=0; """)
         query.exec_()
 
         return query

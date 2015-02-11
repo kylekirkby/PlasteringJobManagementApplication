@@ -53,8 +53,55 @@ class ManageAppointmentsWidget(QWidget):
         self.appointmentTimeEdit.setTime(newTime)
         
     def updateAppointment(self):
-        pass
+        
+        selectedIndexes = self.select_appointment.selectionModel().selection().indexes()
+        rows = []
+        for each in selectedIndexes:
+            rowNum = each.row()
+            if rowNum not in rows:
+                rows.append(rowNum)
 
+        numberOfRowsSelected = len(rows)
+    
+        if numberOfRowsSelected == 1:
+            
+            jobId = self.selectAppointmentModel.record(self.currentRowAppointment).field(1).value()
+            appointmentId = self.selectAppointmentModel.record(self.currentRowAppointment).field(0).value()
+
+            appointmentTime = self.appointmentTimeEdit.time()
+            appointmentTimeFormatted = appointmentTime.toString("HH:mm ap")
+
+            dateText = self.appointmentDateEdit.selectedDate()
+            dateTextFormatted = dateText.toString("ddd d MMMM yyyy")
+
+            values = { "JobID": jobId,
+                       "AppointmentDate": dateTextFormatted,
+                      "AppointmentTime": appointmentTimeFormatted,
+                       "AppointmentID": appointmentId}
+
+            accepted = self.connection.updateAppointment(values)
+
+            if accepted:
+
+                self.cancelEditAppointment()
+                self.cancelSelectAppointment()
+                self.parent.switchToAppointmentsMenu()
+                
+                infoText = """ The Appointment has been updated!"""
+                QMessageBox.information(self, "Appointment Added", infoText)
+                
+            else:
+                infoText = """ The Appointment did not update successfully! """
+
+                QMessageBox.critical(self, "Appointment Not Added", infoText)
+
+                
+
+            
+
+            
+            
+        
     def cancelEditAppointment(self):
         self.appointmentTimeEdit.clear()
         self.select_appointment.clearSelection()

@@ -19,11 +19,13 @@ from AddPlasterer import *
 from AddJob import *
 from AddMaterial import *
 from AddAppointment import *
+from AddInvoice import *
 
 from ManageClients import *
 from ManagePlasterers import *
 from ManageJobs import *
 from ManageAppointments import *
+
 
 
 
@@ -79,6 +81,7 @@ program """
         self.addMaterialLayout()
         self.addAppointmentLayout()
         self.manageAppointmentsLayout()
+        self.addInvoiceLayout()
 
         #Disable database related actions
         self.dbNotOpen()
@@ -98,6 +101,7 @@ program """
         self.addMaterialL.addConnection(self.connection)
         self.addAppointmentL.addConnection(self.connection)
         self.manageAppointmentsL.addConnection(self.connection)
+        self.addInvoiceL.addConnection(self.connection)
 
        
     def dbNotOpen(self):
@@ -357,6 +361,10 @@ program """
         self.manageAppointments.triggered.connect(self.switchToManageAppointments)
         self.appointmentsLayoutWidget.manageAppointmentsPushButton.clicked.connect(self.switchToManageAppointments)
 
+        #Invoices
+        self.addInvoice.triggered.connect(self.switchToAddInvoice)
+        self.invoicesLayoutWidget.addInvoicePushButton.clicked.connect(self.switchToAddInvoice)
+
         
     def createNewDatabase(self):
 
@@ -375,16 +383,16 @@ program """
         if path != "":
             self.connection  = SQLConnection(path)
             self.connection.create_database()
-            self.statusBar.showMessage("A new Database has been created!")
+            self.statusBar.showMessage("A new Database has been created!", 2000)
             self.dbOpen()
 
     def closeDatabaseConn(self):
         
         if self.connection:
             self.close_connection()
-            self.statusBar.showMessage("Database has been closed.")
+            self.statusBar.showMessage("Database has been closed.", 2000)
         else:
-            self.statusBar.showMessage("No Database to close!")
+            self.statusBar.showMessage("No Database to close!", 2000)
 
     def openDatabaseConn(self):
         
@@ -404,7 +412,7 @@ program """
 
                 if opened:
                     self.dbOpen()
-                    self.statusBar.showMessage("Database has been opened.")
+                    self.statusBar.showMessage("Database has been opened.", 2000)
         else:
             infoText = """This is not a correct '.db' database file!"""
             QMessageBox.warning(self, "Incorrect Database!", infoText)
@@ -415,13 +423,13 @@ program """
             closed = self.connection.close_database()
 
             if closed:
-                self.statusBar.showMessage("Database has been closed.")
+                self.statusBar.showMessage("Database has been closed.", 2000)
                 self.dbNotOpen()
                 self.connection = None
             else:
-                self.statusBar.showMessage("An error occured!")
+                self.statusBar.showMessage("An error occured!", 2000)
         else:
-            self.statusBar.showMessage("No Database to close.")
+            self.statusBar.showMessage("No Database to close.", 2000)
 
     def dbOpenLayout(self):
 
@@ -556,11 +564,16 @@ program """
         self.stackedLayout.setCurrentIndex(16)
         query = self.connection.getAllJobs()
         self.manageAppointmentsL.showResults(query)
+    def switchToAddInvoice(self):
+        self.stackedLayout.setCurrentIndex(17)
+        query = self.connection.initialTableJ()
+        self.addInvoiceL.showResults(query)
+
+        query2 = self.connection.initialTableJM()
+        self.addInvoiceL.showMaterialResults(query2)
+
+
         
-
-
-
-
     #----------Add Widgets to Stacked Layout ---------
     
     
@@ -624,6 +637,10 @@ program """
     def manageAppointmentsLayout(self):
         self.manageAppointmentsL = ManageAppointmentsWidget(self)
         self.stackedLayout.addWidget(self.manageAppointmentsL)
+
+    def addInvoiceLayout(self):
+        self.addInvoiceL = AddInvoiceWidget(self)
+        self.stackedLayout.addWidget(self.addInvoiceL)
 
 
         

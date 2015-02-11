@@ -26,7 +26,6 @@ class AddAppointmentWidget(QWidget):
         
         self.setLayout(self.mainLayout)
 
-
         self.model = QSqlQueryModel()
 
         self.setStyleSheet("QWidget[addAppointmentClass=True]{padding:100px;}")
